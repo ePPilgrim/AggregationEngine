@@ -7,4 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="AggregationEngine.Core\**" />
+    <Compile Remove="SimCorp.AggregationEngine.Core\**" />
+    <EmbeddedResource Remove="AggregationEngine.Core\**" />
+    <EmbeddedResource Remove="SimCorp.AggregationEngine.Core\**" />
+    <None Remove="AggregationEngine.Core\**" />
+    <None Remove="SimCorp.AggregationEngine.Core\**" />
+  </ItemGroup>
+
 </Project>

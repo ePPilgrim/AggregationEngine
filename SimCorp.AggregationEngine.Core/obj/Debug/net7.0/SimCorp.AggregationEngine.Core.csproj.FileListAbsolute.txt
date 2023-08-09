@@ -1,0 +1,12 @@
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\bin\Debug\net7.0\SimCorp.AggregationEngine.Core.deps.json
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\bin\Debug\net7.0\SimCorp.AggregationEngine.Core.dll
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\bin\Debug\net7.0\SimCorp.AggregationEngine.Core.pdb
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.csproj.AssemblyReference.cache
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.AssemblyInfoInputs.cache
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.AssemblyInfo.cs
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.csproj.CoreCompileInputs.cache
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.dll
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\refint\SimCorp.AggregationEngine.Core.dll
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\SimCorp.AggregationEngine.Core.pdb
+C:\Users\demyd\Practice\AggregationEngine\SimCorp.AggregationEngine.Core\obj\Debug\net7.0\ref\SimCorp.AggregationEngine.Core.dll

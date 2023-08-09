@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "SikAu0ha0K0tScYGBE5pNcVGOSOTl6gCZqCPZPn4HvU2Z5rh3yrkitVgEUFDkjxHK3Ef+VG89qR4ZSpG0mwV4A==",
+  "dgSpecHash": "oH79Ydvh+xb19TvDnHuN+xmUUvn7DG7B6NFRkMdXFxFUEkwZ007bEjc5677sfprC6YEiv7gonQyEAKE+3AAanQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\demyd\\Practice\\AggregationEngine\\SimCorp.AggregationEngine.Core\\SimCorp.AggregationEngine.Core.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\demyd\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\demyd\\.nuget\\packages\\stackexchange.redis\\2.6.122\\stackexchange.redis.2.6.122.nupkg.sha512",
+    "C:\\Users\\demyd\\.nuget\\packages\\system.io.pipelines\\5.0.1\\system.io.pipelines.5.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

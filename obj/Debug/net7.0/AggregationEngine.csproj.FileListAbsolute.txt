@@ -1,0 +1,17 @@
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.csproj.AssemblyReference.cache
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.AssemblyInfoInputs.cache
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.AssemblyInfo.cs
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.csproj.CoreCompileInputs.cache
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\AggregationEngine.exe
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\AggregationEngine.deps.json
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\AggregationEngine.runtimeconfig.json
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\AggregationEngine.dll
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\AggregationEngine.pdb
+C:\Users\demyd\Practice\AggregationEngine\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.csproj.CopyComplete
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.dll
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\refint\AggregationEngine.dll
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.pdb
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\AggregationEngine.genruntimeconfig.cache
+C:\Users\demyd\Practice\AggregationEngine\obj\Debug\net7.0\ref\AggregationEngine.dll

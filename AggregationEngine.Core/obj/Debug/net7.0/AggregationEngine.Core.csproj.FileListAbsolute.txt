@@ -1,0 +1,5 @@
+C:\Users\demyd\Practice\AggregationEngine\AggregationEngine.Core\obj\Debug\net7.0\AggregationEngine.Core.csproj.AssemblyReference.cache
+C:\Users\demyd\Practice\AggregationEngine\AggregationEngine.Core\obj\Debug\net7.0\AggregationEngine.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\demyd\Practice\AggregationEngine\AggregationEngine.Core\obj\Debug\net7.0\AggregationEngine.Core.AssemblyInfoInputs.cache
+C:\Users\demyd\Practice\AggregationEngine\AggregationEngine.Core\obj\Debug\net7.0\AggregationEngine.Core.AssemblyInfo.cs
+C:\Users\demyd\Practice\AggregationEngine\AggregationEngine.Core\obj\Debug\net7.0\AggregationEngine.Core.csproj.CoreCompileInputs.cache

@@ -21,7 +21,7 @@ internal class DefaultAggregationCalculation<TOrderedKey, TUnorderedKey, TVector
         this.emptyMapFactory = emptyMapFactory ?? throw new ArgumentNullException(nameof(emptyMapFactory));
         this.orderedKeyFactory = orderedKeyFactory ?? throw new ArgumentNullException(nameof(orderedKeyFactory));
         this.aggregationStructure = aggregationStructure ?? throw new ArgumentNullException(nameof(aggregationStructure));
-        leaves = emptyMapFactory.CreateEmptyUnorderedVectorMap();
+        leaves = emptyMapFactory.CreateEmptyUnorderedVectorAsyncMap();
     }
 
     public TVector AccumulateForSingleNode(TOrderedKey nodeKey, Func<IEnumerable<TVector>, TVector> accumulator)

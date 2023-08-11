@@ -1,4 +1,4 @@
-﻿using SimCorp.AggregationEngine.Core.DataCollections;
+﻿using SimCorp.AggregationEngine.Core.DataLayer;
 using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Key;
 
@@ -8,7 +8,7 @@ internal interface IEmptyMapFactoryInternal<TOrderedKey, TUnorderedKey, TVector,
                                                                                                         where TUnorderedKey : IEqualityComparer<TUnorderedKey>
                                                                                                         where TVector : struct, IAggregationPosition
 {
-    IMap<TUnorderedKey, TVector> CreateEmptyUnorderedVectorMap();
+    IMap<TUnorderedKey, TVector> CreateEmptyUnorderedVectorAsyncMap();
     IMap<TUnorderedKey, TResult> CreateEmptyUnorderedResultMap();
     IMap<TOrderedKey, IMap<TUnorderedKey, TResult>> CreateEmptyOrderedUnorderedResultMap();
 }

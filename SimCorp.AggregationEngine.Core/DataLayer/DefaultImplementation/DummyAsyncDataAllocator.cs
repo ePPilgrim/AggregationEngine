@@ -2,13 +2,13 @@
 
 namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
 
-internal class DummyCacheLayer<T> : ICacheLayer<T>
+internal class DummyAsyncDataAllocator<T> : IAsyncDataAllocator<T>
 {
-    private readonly Dictionary<string, CacheNode> data;
+    private readonly Dictionary<string, AllocNode> data;
 
-    public DummyCacheLayer()
+    public DummyAsyncDataAllocator()
     {
-        data = new Dictionary<string, CacheNode>();
+        data = new Dictionary<string, AllocNode>();
     }
     public T Get(string key)
     {
@@ -21,7 +21,7 @@ internal class DummyCacheLayer<T> : ICacheLayer<T>
     public void Set(string key, T value)
     {
         int refCount = (data.ContainsKey(key)) ? data[key].RefCount : 1;
-        data[key] = new CacheNode()
+        data[key] = new AllocNode()
         {
             Data = JsonSerializer.SerializeToUtf8Bytes<T>(value),
             TimeStamp = DateTime.UtcNow,
@@ -51,6 +51,41 @@ internal class DummyCacheLayer<T> : ICacheLayer<T>
     }
 
     public bool Contains(string key, T value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<T>> Get(IEnumerable<string> keys)
+    {
+
+        if (data.ContainsKey(key))
+        {
+            return JsonSerializer.Deserialize<T>(data[key].Data);
+        }
+        return default(T);
+    }
+
+    public void Set(IEnumerable<KeyValuePair<string, T>> values)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<bool> Remove(IEnumerable<string> keys)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<bool> Contains(IEnumerable<KeyValuePair<string, T>> values)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<DateTime> GetTimeStamps(IEnumerable<string> keys)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Flush()
     {
         throw new NotImplementedException();
     }

@@ -7,10 +7,10 @@ namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
 internal abstract class DefaultMap<TKey, TValue> : IMap<TKey, TValue> where TKey : class, IEquatable<TKey>
 {
     private readonly IDictionary<TKey, string> mapToCacheKey;
-    private readonly ICacheLayer<TValue> cache;
+    private readonly IAsyncDataAllocator<TValue> cache;
     private readonly IKeyToStringConvertor<TKey> keyToString; //key helper
 
-    public DefaultMap(ICacheLayer<TValue> cache, IKeyToStringConvertor<TKey> keyToString)
+    public DefaultMap(IAsyncDataAllocator<TValue> cache, IKeyToStringConvertor<TKey> keyToString)
     {
         this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
         this.keyToString = keyToString ?? throw new ArgumentNullException( nameof(keyToString));

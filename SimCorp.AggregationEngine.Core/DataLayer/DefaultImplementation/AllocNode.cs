@@ -1,8 +1,12 @@
 ﻿namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
 
-internal class CacheNode
+internal record AllocNode
 {
-    public byte[]? Data { get; set; }
+    public AllocNode()
+    {
+        Data = Array.Empty<byte>();
+    }
+    public byte[] Data { get; set; }
     public DateTime TimeStamp { get; set; }
     public int RefCount { get; set; }
 }

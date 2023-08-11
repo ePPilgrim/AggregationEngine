@@ -1,4 +1,4 @@
-﻿namespace SimCorp.AggregationEngine.Core.DataCollections;
+﻿namespace SimCorp.AggregationEngine.Core.DataLayer;
 
 internal interface IMap<TKey, TValue> : IDictionary<TKey, TValue>
 {

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Key\DefaultImplementation\" />
+    <Compile Remove="Key\DefaultImplementation\**" />
+    <EmbeddedResource Remove="Key\DefaultImplementation\**" />
+    <None Remove="Key\DefaultImplementation\**" />
   </ItemGroup>
 
   <ItemGroup>

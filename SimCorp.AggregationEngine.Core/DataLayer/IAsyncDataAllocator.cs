@@ -2,10 +2,12 @@
 
 public interface IAsyncDataAllocator<T>
 {
-    IAsyncEnumerable<T> Get(IEnumerable<string> keys);
-    Task Set(IEnumerable<KeyValuePair<string, T>> values);
-    Task<IEnumerable<bool>> Remove(IEnumerable<string> keys);
-    Task<IEnumerable<bool>> Contains(IEnumerable<KeyValuePair<string, T>> values);
-    Task<IEnumerable<DateTime>> GetTimeStamps(IEnumerable<string> keys);
-    Task Flush();
+    Task<T> GetAsync(string key, CancellationToken token);
+    IAsyncEnumerable<T> FetchAsAsyncSequence(IEnumerable<string> keys);
+    Task<IDictionary<string,T>> FetchAtOnceAsync(HashSet<string> keys, CancellationToken token);
+    Task SetAsync(IEnumerable<KeyValuePair<string, T>> values, CancellationToken token);
+    Task<IEnumerable<bool>> RemoveAsync(IEnumerable<string> keys, CancellationToken token);
+    Task<IEnumerable<bool>> ContainsAsync(IEnumerable<KeyValuePair<string, T>> values, CancellationToken token);
+    Task<IEnumerable<DateTime>> GetTimeStampsAsync(IEnumerable<string> keys, CancellationToken token);
+    Task FlushAsync(CancellationToken token);
 }

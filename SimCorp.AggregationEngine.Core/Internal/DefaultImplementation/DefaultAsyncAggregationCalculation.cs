@@ -7,7 +7,7 @@ namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
 
 internal class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVector, TResult> : IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, TVector, TResult>
                                                                                                                                 where TOrderedKey : IKey
-                                                                                                                                where TUnorderedKey : IEqualityComparer<TUnorderedKey>
+                                                                                                                                where TUnorderedKey : IEqualityComparer<TUnorderedKey>, IEquatable<TUnorderedKey>
                                                                                                                                 where TVector : struct, IAggregationPosition
 {
     private readonly IEmptyAsyncMapFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> emptyMapFactory;
@@ -119,7 +119,7 @@ internal class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TV
 
     public async Task<IEnumerable<bool>> RemoveAsync(IEnumerable<TUnorderedKey> keys, CancellationToken token)
     {
-        return await leaves.RemoveAsync(keys, token);
+        return await leaves.RemoveAsync(keys.ToArray(), token);
     }
 
     private TOrderedKey BuildKeyInternal(TVector vector) => orderedKeyFactory.CreateKeyBuilder(vector).Add(aggregationStructure).Build();

@@ -9,10 +9,21 @@ using System.Text.Json;
 var dic = new Dictionary<int, int>() { { 1, 11 }, { 2, 22 } };
 dic.Add(1, 12);
 
+int[] numbers = { 1, 2, 3, 4, 5 };
 
+var transformedResults = await numbers
+    .Select(async num => await TransformAsync(num))
+    .ToListAsync();
 
 
 Console.WriteLine("Hello, World!");
+
+static async Task<int> TransformAsync(int number)
+{
+    // Simulate an asynchronous operation
+    await Task.Delay(100);
+    return number * 2;
+}
 
 public class MyClass
 {

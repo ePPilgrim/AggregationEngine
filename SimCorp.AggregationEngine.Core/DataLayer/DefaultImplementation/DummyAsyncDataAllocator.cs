@@ -1,10 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
 
 namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
 
 internal class DummyAsyncDataAllocator<T> : IAsyncDataAllocator<T>
 {
-    private readonly Dictionary<string, AllocNode> data;
+    private readonly ConcurrentDictionary<string, AllocNode> data;
 
     public DummyAsyncDataAllocator()
     {

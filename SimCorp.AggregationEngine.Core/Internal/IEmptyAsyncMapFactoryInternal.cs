@@ -11,5 +11,6 @@ internal interface IEmptyAsyncMapFactoryInternal<TOrderedKey, TUnorderedKey, TVe
     IAsyncMap<TUnorderedKey, TVector> CreateEmptyUnorderedVectorAsyncMap();
     IAsyncMap<TUnorderedKey, TResult> CreateEmptyUnorderedResultAsyncMap();
     IAsyncMap<KeyValuePair<TOrderedKey, TUnorderedKey>, TResult> CreateEmptyOrderedUnorderedResultAsyncMap();
+    IAsyncMap<TOrderedKey, TVector> CreateEmptyOrderedVectorAsyncMap();
     TVector CreateZeroVector();
 }

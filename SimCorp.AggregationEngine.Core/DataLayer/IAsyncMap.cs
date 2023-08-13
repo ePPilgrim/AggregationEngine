@@ -1,10 +1,11 @@
 ﻿namespace SimCorp.AggregationEngine.Core.DataLayer;
 
-internal interface IAsyncMap<TKey, TValue> : IAsyncEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull
+internal interface IAsyncMap<TKey, TValue> : IAsyncEnumerable<KeyValuePair<TKey, TValue>>, IDisposable where TKey : notnull
 {
-    IAsyncEnumerable<TValue> Values { get; }
+    IEnumerable<TValue> Values { get; }
     ICollection<TKey> Keys { get; }
-    int Count { get; } 
+    int Count { get; }
+    IAsyncEnumerable<TValue> GetAllValuesAsync();
     Task<IDictionary<TKey, TValue>> GetAsync(HashSet<TKey> keys, CancellationToken token);
     Task<TValue> GetAsync(TKey key, CancellationToken token);
     Task UpdateOrAddAsync(IEnumerable<KeyValuePair<TKey, TValue>> positions, CancellationToken token);

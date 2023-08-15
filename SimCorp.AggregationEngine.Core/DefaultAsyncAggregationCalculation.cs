@@ -51,17 +51,22 @@ public class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVec
 
     public async Task<IDictionary<TUnorderedKey, TVector>> GetAllLeaves(CancellationToken token)
     {
-        var res = aggregationCalculationInternal.GetAllLeaves();
-        //return await res.GetAsync(res.Keys.ToHashSet(), token);
+        var leaves = aggregationCalculationInternal.GetAllLeaves();
+        Dictionary<TUnorderedKey, TVector> res = new();
+        await foreach(var item in leaves)
+        {
+            res[item.Key] = await item.Value.GetAsyncVector(token);
+        }
+        return res;
     }
 
-    public Task<IEnumerable<bool>> RemoveAsync(IEnumerable<TUnorderedKey> keys, CancellationToken token)
+    public async Task<IEnumerable<bool>> RemoveAsync(IEnumerable<TUnorderedKey> keys, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return await aggregationCalculationInternal.RemoveAsync(keys, token);
     }
 
     public Task UpdateOrAddAsync(IEnumerable<TVector> positions, CancellationToken token)
     {
-        throw new NotImplementedException();
+        
     }
 }

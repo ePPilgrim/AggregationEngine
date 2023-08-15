@@ -3,4 +3,6 @@
 public interface IAggregationPosition : IEquatable<IAggregationPosition>
 {
     void CombineWith(IEnumerable<IAggregationPosition> aggregationPositions);
+    IMetaData MetaData { get; }
+    IVector Values { get; }
 }

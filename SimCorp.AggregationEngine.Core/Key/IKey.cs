@@ -1,9 +1,8 @@
-﻿namespace SimCorp.AggregationEngine.Core.Key;
+﻿using System.Collections;
 
-public interface IKey : IEquatable<IKey> //Multylevel ordered key
+namespace SimCorp.AggregationEngine.Core.Key;
+
+public interface IKey :IEquatable<IKey> 
 {
-    bool IsPrefixOf(IKey otherKey);
-    bool IsEmpty { get; }
-    int NumberOfSubKeys { get; }
-    IAggregationStructure AggregationStructure { get; }
+    string ToUniqueString();
 }

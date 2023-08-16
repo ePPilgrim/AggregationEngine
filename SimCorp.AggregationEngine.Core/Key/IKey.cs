@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace SimCorp.AggregationEngine.Core.Key;
+﻿namespace SimCorp.AggregationEngine.Core.Key;
 
 public interface IKey :IEquatable<IKey> 
 {

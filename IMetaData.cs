@@ -9,6 +9,16 @@ public struct MetaData : IMetaData
     public string? Name { get; set; }
 }
 
+public interface IMetaData3 : IMetaData2
+{
+    string MyNamed { get; set; }
+}
+
+public interface IMetaData2 : IMetaData
+{
+   string MyName { get; set; }
+}
+
 public interface IMetaData
 {
     [AggregationLevel(AggregationLevel.Portfolio)]

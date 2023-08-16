@@ -10,12 +10,12 @@ internal class DefaultAggregationCalculation<TOrderedKey, TUnorderedKey, TVector
                                                                                                                                 where TVector : struct, IAggregationPosition
 {
     private readonly IEmptyMapFactoryInternal<TOrderedKey,TUnorderedKey, TVector, TResult> emptyMapFactory;
-    private readonly IOrderedKeyFactory<TOrderedKey, TVector> orderedKeyFactory;
+    private readonly IKeyFactory<TOrderedKey, TVector> orderedKeyFactory;
     private readonly IMap<TUnorderedKey, TVector> leaves;
     private IAggregationStructure aggregationStructure;
 
     public DefaultAggregationCalculation(   IEmptyMapFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> emptyMapFactory,
-                                            IOrderedKeyFactory<TOrderedKey, TVector> orderedKeyFactory,
+                                            IKeyFactory<TOrderedKey, TVector> orderedKeyFactory,
                                             IAggregationStructure aggregationStructure)
     {
         this.emptyMapFactory = emptyMapFactory ?? throw new ArgumentNullException(nameof(emptyMapFactory));

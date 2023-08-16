@@ -11,12 +11,12 @@ internal class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TV
                                                                                                                                 where TVector : struct, IAggregationPosition
 {
     private readonly IEmptyAsyncMapFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> emptyMapFactory;
-    private readonly IOrderedKeyFactory<TOrderedKey, TVector> orderedKeyFactory;
+    private readonly IKeyFactory<TOrderedKey, TVector> orderedKeyFactory;
     private readonly IAsyncMap<TUnorderedKey, TVector> leaves;
     private IAggregationStructure aggregationStructure;
 
     public DefaultAsyncAggregationCalculation(IEmptyAsyncMapFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> emptyMapFactory,
-                                            IOrderedKeyFactory<TOrderedKey, TVector> orderedKeyFactory,
+                                            IKeyFactory<TOrderedKey, TVector> orderedKeyFactory,
                                             IAggregationStructure aggregationStructure)
     {
         this.emptyMapFactory = emptyMapFactory ?? throw new ArgumentNullException(nameof(emptyMapFactory));

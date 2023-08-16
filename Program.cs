@@ -4,6 +4,40 @@ using AggregationEngine;
 using System.Reflection;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection.Emit;
+using System.Collections.ObjectModel;
+
+
+var y1 = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+var dd = new Dictionary<int, int>()
+{
+    {1,1 },{2,2}, {3,3}
+};
+
+
+var d1 = new ReadOnlyDictionary<int, int>(dd);
+var d2 = new ReadOnlyDictionary<int, int>(dd);
+
+var b = (d1 == d2);
+
+
+var t = new Stack<int>();
+t.Push(1);
+t.Push(2);
+t.Push(3);
+t.Push(4);
+
+var tt = t.ToArray();
+
+object ttt = (object)tt;
+var type = ttt.GetType();
+
+foreach(var el in t)
+{
+    Console.WriteLine(el);  
+}
+
+var v1=AggregationLevel.Holding.ToString();
 
 var obj = new MetaData()
 {
@@ -14,8 +48,11 @@ var obj = new MetaData()
     HoldingIK = 42
 };
 
-Type myClassType = typeof(IMetaData);
+Type myClassType = typeof(IMetaData3);
 PropertyInfo[] properties = myClassType.GetProperties();
+
+Type[] interfaces = myClassType.GetInterfaces();
+
 
 foreach (PropertyInfo property in properties)
 {

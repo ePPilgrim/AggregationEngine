@@ -1,7 +1,8 @@
 ﻿namespace SimCorp.AggregationEngine.Core.Key;
 
-public interface IOrderedKey : IKey 
+public interface IOrderedKey<TKey> : IKey where TKey : class
 {
-    bool IsPrefixOf(IKey otherKey);
-    IAggregationStructure AggregationStructure { get; }
+    bool IsPrefixOf(TKey otherKey);
+    bool IsEmpty();
+    TKey GetSubKey(IAggregationStructure subAggregationStructure);
 }

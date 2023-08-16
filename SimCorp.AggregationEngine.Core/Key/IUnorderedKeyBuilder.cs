@@ -2,7 +2,8 @@
 
 namespace SimCorp.AggregationEngine.Core.Key;
 
-public interface IParametersKeyBuilder<TKey> where TKey : IKey
+public interface IUnorderedKeyBuilder<TKey> where TKey : IKey
 {
+    TKey Build(IMetaData metaData);
     TKey Build(IParameters parameters);
 }

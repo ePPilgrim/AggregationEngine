@@ -2,9 +2,8 @@
 
 namespace SimCorp.AggregationEngine.Core;
 
-public interface IAggregationStructure : IEnumerable<IAggregationStructure>, IEquatable<IAggregationStructure>
+public interface IAggregationStructure : IEnumerable<AggregationLevel>, IEquatable<IAggregationStructure> 
 {
-    void Pop();
-    void Push(AggregationLevel aggregationLevel);
-    AggregationLevel Peek();
+    bool IsPrefixOf(IAggregationStructure aggregateStructure);
+    bool IsEmpty();
 }

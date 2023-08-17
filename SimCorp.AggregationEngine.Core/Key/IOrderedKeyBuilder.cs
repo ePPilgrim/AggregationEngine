@@ -4,7 +4,7 @@ namespace SimCorp.AggregationEngine.Core.Key;
 
 public interface IOrderedKeyBuilder<TKey> where TKey : class, IOrderedKey<TKey>
 {
-    TKey Build(IMetaData metaData);
+    TKey Build<T>(T metaData);
     TKey BuildEmptyKey();
-    TKey BuildSubKey(TKey Key, IAggregationStructure subAggregationStructure);
+    TKey BuildSubKey(TKey key, IAggregationStructure subAggregationStructure);
 }

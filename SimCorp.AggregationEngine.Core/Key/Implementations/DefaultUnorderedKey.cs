@@ -5,7 +5,7 @@ public class DefaultUnorderedKey : IKey
     private readonly IKeyToStringHelper keyToStringHelper;
     private readonly string key;
 
-    public DefaultUnorderedKey(IKeyToStringHelper keyToStringHelper, IReadOnlyDictionary<string,string> keyValuePairs)
+    public DefaultUnorderedKey(IKeyToStringHelper keyToStringHelper, IReadOnlyDictionary<string,string?> keyValuePairs)
     {
         this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
         if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
@@ -24,9 +24,9 @@ public class DefaultUnorderedKey : IKey
         return key;
     }
 
-    private string buildKey(IReadOnlyDictionary<string, string> keyValuePairs)
+    private string buildKey(IReadOnlyDictionary<string, string?> keyValuePairs)
     {
-        var orderedSequence = keyValuePairs.OrderByDescending(x => x.Key);
-        return keyToStringHelper.UnorderKeyToStringKey(orderedSequence.Select(x => x.Key).ToArray(), orderedSequence.Select(x => x.Value).ToArray());
+        var orderedSequence = keyValuePairs.Where(x => x.Value != null).OrderByDescending(x => x.Key);
+        return keyToStringHelper.UnorderKeyToStringKey(orderedSequence.Select(x => x.Key).ToArray(), orderedSequence.Select(x => x.Value!).ToArray());
     }
 }

@@ -7,18 +7,15 @@ using System.Reflection.Emit;
 using System.Collections.ObjectModel;
 
 
-var y1 = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+int[] ar = new int[3];
+int i = 0;
+ar[i++] = 1;
 
-var dd = new Dictionary<int, int>()
-{
-    {1,1 },{2,2}, {3,3}
-};
+var t1 = new Stack<int>(new int[] {1,2,3,4});
+t1.Push(333);
+var tt1 = t1.ToArray();
 
-
-var d1 = new ReadOnlyDictionary<int, int>(dd);
-var d2 = new ReadOnlyDictionary<int, int>(dd);
-
-var b = (d1 == d2);
+var t2 = new Stack<int>(t1.Reverse());
 
 
 var t = new Stack<int>();
@@ -48,19 +45,19 @@ var obj = new MetaData()
     HoldingIK = 42
 };
 
-Type myClassType = typeof(IMetaData3);
+Type myClassType = typeof(IMetaData);
 PropertyInfo[] properties = myClassType.GetProperties();
 
 Type[] interfaces = myClassType.GetInterfaces();
 
-
+var dels = new List<object>();
 foreach (PropertyInfo property in properties)
 {
     if (property.GetCustomAttributes(typeof(AggregationLevelAttribute), true).Any())
     {
         var attributeObj = property.GetCustomAttribute<AggregationLevelAttribute>();
         //Console.WriteLine($"Property name: {property.Name}");
-        Console.WriteLine($"Aggregation level: {attributeObj.AggregationLevel}");
+        //Console.WriteLine($"Aggregation level: {attributeObj.AggregationLevel}");
 
         Type[] aargs = { typeof(IMetaData)};
         DynamicMethod GetProportyValue = new DynamicMethod($"Get{property.Name}",property.PropertyType,aargs,typeof(Program).Module);
@@ -75,23 +72,31 @@ foreach (PropertyInfo property in properties)
         Type delegateType = typeof(Func<,>).MakeGenericType(typeof(IMetaData), property.PropertyType);
         Delegate Rep = GetProportyValue.CreateDelegate(delegateType);
 
-        Getter getter = (IMetaData x) =>
+        DelegateGetter<IMetaData>.Getter getter = (IMetaData x) =>
         {
             var result = Rep.DynamicInvoke(obj);
-            if(result == null)
-            {
-                return "Somthin wrond!!!!!!!!!!!!!!!!!!!";
-            }
-            return result.ToString();
+            return KeyValuePair.Create(property.Name, (result == null) ? null : result.ToString());
         };
 
-        Console.WriteLine($"Property name: {property.Name}, Property value: {getter(obj)}");
+        dels.Add(getter);
+
+        //Console.WriteLine($"Property name: {property.Name}, Property value: {getter(obj)}");
 
         
         //Delegate getStringDelegate = methodBuilder.CreateDelegate(delegateType);
-
-
     }
+}
+
+foreach(var del in dels)
+{
+    var getter = del as DelegateGetter<IMetaData>.Getter;
+    if(getter == null)
+    {
+        Console.WriteLine("Could not resolve delegate!!!");
+        break;
+    }
+    var res = getter(obj);
+    Console.WriteLine($"Property name: {res.Key}, Property value: {res.Value}");
 }
 
 
@@ -99,5 +104,8 @@ foreach (PropertyInfo property in properties)
 
 Console.WriteLine("Hello, World!");
 
+public class DelegateGetter<T>
+{
+    public delegate KeyValuePair<string, string?> Getter(T metaData);
+}
 
-delegate string? Getter(IMetaData metaData);

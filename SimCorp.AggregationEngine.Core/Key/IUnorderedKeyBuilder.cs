@@ -4,6 +4,6 @@ namespace SimCorp.AggregationEngine.Core.Key;
 
 public interface IUnorderedKeyBuilder<TKey> where TKey : IKey
 {
-    TKey Build(IMetaData metaData);
-    TKey Build(IParameters parameters);
+    TKey BuildForVectors<TVector>(TVector vector);
+    TKey BuildForParameters<TParam>(TParam parameters);
 }

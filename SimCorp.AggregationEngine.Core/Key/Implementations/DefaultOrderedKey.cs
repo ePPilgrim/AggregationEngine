@@ -10,12 +10,13 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
     public DefaultOrderedKey(IOrderedKeyBuilder<DefaultOrderedKey> keyBuilder,
                              IKeyToStringHelper keyToStringHelper,
                              IAggregationStructure aggregationStructure, 
-                             IReadOnlyDictionary<AggregationLevel,string> aggrigationLevelValues)
+                             IReadOnlyDictionary<AggregationLevel,string?> aggrigationLevelValues)
     {
         this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
         this.keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
         AggregationStructure = aggregationStructure ?? throw new ArgumentNullException(nameof(aggregationStructure));
-        StructureValues = aggregationStructure.Select(x => aggrigationLevelValues[x]).ToArray();    
+        argumentValidation(aggrigationLevelValues);
+        StructureValues = aggregationStructure.Select(x => aggrigationLevelValues[x]!).ToArray();
     }
 
     public IAggregationStructure AggregationStructure { get; }
@@ -49,5 +50,14 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
     public string ToUniqueString()
     {
         return keyToStringHelper.OrderKeyToStringKey(AggregationStructure.Select(x => x.ToString()).ToArray(), StructureValues);
+    }
+
+    private void argumentValidation(IReadOnlyDictionary<AggregationLevel, string?> aggrigationLevelValues)
+    {
+        var nullValues = AggregationStructure.Where(x => aggrigationLevelValues[x] == null);
+        if (nullValues.Count() != 0)
+        {
+            throw new ArgumentException($"No value for aggregation levels {string.Join(",", nullValues)} are found.");
+        }
     }
 }

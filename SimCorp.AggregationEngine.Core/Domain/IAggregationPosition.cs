@@ -1,8 +1,7 @@
 ﻿namespace SimCorp.AggregationEngine.Core.Domain;
 
-public interface IAggregationPosition : IEquatable<IAggregationPosition>
+public interface IAggregationPosition 
 {
-    void CombineWith(IEnumerable<IAggregationPosition> aggregationPositions);
     IMetaData MetaData { get; }
     IVector Values { get; }
 }

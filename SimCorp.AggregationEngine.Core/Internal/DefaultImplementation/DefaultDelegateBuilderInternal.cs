@@ -9,7 +9,7 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
 {
     private readonly Func<TVector, IParameters, CancellationToken, Task<TResult>> innerCalculator;
     private readonly Func<IEnumerable<TVector>, CancellationToken, Task<TVector>> innerAccumulator;
-    private readonly IAsyncMapVectorDecoratorInternal<TKey, TVector> allocator;
+    private readonly IAsyncMapVectorWrapperInternal<TKey, TVector> allocator;
     private readonly IPositionDataLayerFactory<TVector> dataLayerFactory;
     private readonly IOptimizationPolicyInternal optimizationPolicy;
 

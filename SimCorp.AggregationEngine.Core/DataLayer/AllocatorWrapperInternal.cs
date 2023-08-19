@@ -3,7 +3,7 @@ using SimCorp.AggregationEngine.Core.Key;
 
 namespace SimCorp.AggregationEngine.Core.DataLayer;
 
-internal class AllocatorWrapperInternal<TVector> : IAggregationPosition where TVector : IAggregationPosition
+internal class AllocatorWrapperInternal<TVector> : IMetaData where TVector : IAggregationPosition
 {
     private readonly IMetaData metaData;
     private readonly IAsyncMapInternal<IKey, TVector> allocator;

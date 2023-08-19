@@ -11,7 +11,7 @@ namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
 internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnorderedKey, TVector, TResult> : IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, TVector, TResult>
                                                                                                                                 where TOrderedKey : IOrderedKey<TOrderedKey>
                                                                                                                                 where TUnorderedKey : IKey
-                                                                                                                                where TVector : IAggregationPosition
+                                                                                                                                where TVector : IMetaData
 {
     private readonly IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory;
     private readonly IDataLayerFactory<TVector> vectorDataLayerFactory;

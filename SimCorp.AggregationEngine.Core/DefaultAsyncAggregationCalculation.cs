@@ -89,13 +89,13 @@ public class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVec
         var keyBuilder = unorderedKeyFactory.CreateUnorderedKeyBuilder();
         foreach(var position in positions)
         {
-            await leaves.AddAsync(keyBuilder.BuildForVectors(position), position, token);
+            await leaves.AddAsync(keyBuilder.BuildForPositions(position), position, token);
         }
 
         var leavesInteranl = aggregationCalculationInternal.GetAllLeaves();
         foreach (var key in leaves.Keys)
         {
-            var isSuccess = await leavesInteranl.TryShallowInsert(key, token);
+            var isSuccess = await leavesInteranl.TryShallowAddAsync(key, token);
             if (isSuccess == false)
             {
                 throw new KeyNotFoundException($"Inconsistent work of allocator layer. Or two different reference to the allocators");

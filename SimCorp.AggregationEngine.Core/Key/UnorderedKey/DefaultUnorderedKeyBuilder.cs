@@ -13,12 +13,12 @@ public class DefaultUnorderedKeyBuilder : IUnorderedKeyBuilder<DefaultUnorderedK
         this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
     }
 
-    public DefaultUnorderedKey BuildForParameters<TParam>(TParam parameters)
+    public DefaultUnorderedKey BuildForParameters<T>(T parameters) where T : IParameters
     {
         return new DefaultUnorderedKey(keyToStringHelper, keyPropertySelector.GetPropertiesWithKeyAttribute(parameters));
     }
 
-    public DefaultUnorderedKey BuildForVectors<TVector>(TVector vector)
+    public DefaultUnorderedKey BuildForPositions<T>(T vector) where T : IMetaData
     {
         var dict = new Dictionary<string, string?>();
         foreach (var aggregationLevel in (AggregationLevel[])Enum.GetValues(typeof(AggregationLevel)))

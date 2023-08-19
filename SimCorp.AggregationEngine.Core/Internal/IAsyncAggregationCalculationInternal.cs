@@ -8,7 +8,7 @@ namespace SimCorp.AggregationEngine.Core.Internal;
 
 internal interface IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, TVector, TResult>   where TOrderedKey : IOrderedKey<TOrderedKey>
                                                                                                         where TUnorderedKey : IKey
-                                                                                                        where TVector : IAggregationPosition
+                                                                                                        where TVector : IMetaData
 {
     IAsyncMapInternal<TUnorderedKey, TVector> GetAllLeaves();
     IAggregationStructure AggregartionStructure { get; set; }

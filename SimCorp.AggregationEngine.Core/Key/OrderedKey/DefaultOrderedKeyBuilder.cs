@@ -20,7 +20,7 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
         this.aggregationStructureBuilder = aggregationStructureBuilder ?? throw new ArgumentNullException(nameof(aggregationStructureBuilder));
     }
 
-    public DefaultOrderedKey Build<T>(T metaData)
+    public DefaultOrderedKey Build<T>(T metaData) where T : IMetaData
     {
         var dict = new Dictionary<AggregationLevel, string?>();
         foreach (var aggregationLevel in aggregationStructure)

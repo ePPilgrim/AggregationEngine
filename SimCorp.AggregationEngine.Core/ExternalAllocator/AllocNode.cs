@@ -1,4 +1,4 @@
-﻿namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
+﻿namespace SimCorp.AggregationEngine.Core.ExternalAllocator;
 
 internal record AllocNode
 {

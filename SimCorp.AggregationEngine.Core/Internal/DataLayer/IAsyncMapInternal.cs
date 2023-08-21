@@ -1,6 +1,6 @@
 ﻿using SimCorp.AggregationEngine.Core.Key;
 
-namespace SimCorp.AggregationEngine.Core.DataLayer;
+namespace SimCorp.AggregationEngine.Core.Internal.DataLayer;
 
 internal interface IAsyncMapInternal<TKey, TValue> : IEnumerable<KeyValuePair<TKey, Task<TValue>>>, IDisposable, ICloneable where TKey : IKey
 {
@@ -12,4 +12,5 @@ internal interface IAsyncMapInternal<TKey, TValue> : IEnumerable<KeyValuePair<TK
     Task<bool> TryShallowAddAsync(TKey key, CancellationToken token);
     Task UpdateOrAddAsync(IEnumerable<KeyValuePair<TKey, TValue>> positions, CancellationToken token);
     Task RemoveAsync(IEnumerable<TKey> keys, CancellationToken token);
+    string GetExternalAllocatorID();
 }

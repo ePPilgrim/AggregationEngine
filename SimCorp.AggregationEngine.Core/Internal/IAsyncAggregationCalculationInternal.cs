@@ -1,7 +1,6 @@
-﻿using SimCorp.AggregationEngine.Core.DataLayer;
-using SimCorp.AggregationEngine.Core.Domain;
+﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
 namespace SimCorp.AggregationEngine.Core.Internal;
@@ -10,8 +9,6 @@ internal interface IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedK
                                                                                                         where TUnorderedKey : IKey
                                                                                                         where TVector : IMetaData
 {
-    IAsyncMapInternal<TUnorderedKey, TVector> GetAllLeaves();
-    IAggregationStructure AggregartionStructure { get; set; }
     Task<IAsyncMapInternal<TUnorderedKey, TResult>> CalculateSingleNodeAsync(TOrderedKey nodeKey,
                                                      IDictionary<TUnorderedKey, IParameters> parameters,
                                                      Func<TVector, IParameters, CancellationToken, Task<TResult>> calculator,

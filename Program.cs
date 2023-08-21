@@ -7,6 +7,20 @@ using System.Reflection.Emit;
 using System.Collections.ObjectModel;
 
 
+var hostBuilder = Host.CreateDefaultBuilder(args);
+
+var connectionString = (args.Length > 0) ? args[0] : Environment.GetEnvironmentVariable("DOTNET_CONNECTIONSTRING");
+
+hostBuilder.ConfigureServices(services =>
+{
+    services.AddMariaDbInfrastructure(connectionString);
+    services.AddDomain();
+    services.AddDataSeedingServices();
+    services.AddHostedService<DataSeedingApplication>();
+});
+
+var host = hostBuilder.Build();
+host.Start();
 
 var obj = new MetaData()
 {

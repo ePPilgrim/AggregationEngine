@@ -1,9 +1,8 @@
-﻿using SimCorp.AggregationEngine.Core.DataLayer;
-using SimCorp.AggregationEngine.Core.Domain;
+﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
-using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 using System.Collections.Concurrent;
 
 namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
@@ -14,34 +13,21 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                                                                                                                                 where TVector : IMetaData
 {
     private readonly IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory;
-    private readonly IDataLayerFactory<TVector> vectorDataLayerFactory;
     private readonly IDataLayerFactory<TResult> resultDataLayerFactory;
     private readonly IAsyncMapInternal<TUnorderedKey, TVector> leaves;
-    private readonly IUnorderedKeyBuilder<TUnorderedKey> unorderedKeyBuilder;
-    private IAggregationStructure aggregationStructure;
-    private IOrderedKeyBuilder<TOrderedKey> orderedKeyBuilder;
+    private readonly IAggregationStructure aggregationStructure;
+    private readonly IOrderedKeyBuilder<TOrderedKey> orderedKeyBuilder;
 
-    public DefaultAsyncAggregationCalculationInternal(  IKeyFactory<TOrderedKey,TUnorderedKey> keyFactory,
-                                                        IDataLayerFactory<TVector> vectorDataLayerFactory,
-                                                        IDataLayerFactory<TResult> resultDataLayerFactory)
+    public DefaultAsyncAggregationCalculationInternal(  IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory,                                                  
+                                                        IDataLayerFactory<TResult> resultDataLayerFactory,
+                                                        IAsyncMapInternal<TUnorderedKey, TVector> leaves,
+                                                        IAggregationStructure aggregationStructure)
     {
-        this.keyFactory = keyFactory ?? throw new ArgumentNullException(nameof(keyFactory));
-        this.vectorDataLayerFactory = vectorDataLayerFactory ?? throw new ArgumentNullException(nameof(vectorDataLayerFactory));
-        this.resultDataLayerFactory = resultDataLayerFactory ?? throw new ArgumentNullException(nameof(resultDataLayerFactory));
-
-        leaves = vectorDataLayerFactory.Create<TUnorderedKey>();
-        aggregationStructure = keyFactory.CreateAggregationStructureBuilder().BuildEmptyAggregationStructure();
-        unorderedKeyBuilder = keyFactory.CreateUnorderedKeyBuilder();
+        this.keyFactory = keyFactory;
+        this.resultDataLayerFactory = resultDataLayerFactory;
+        this.leaves = leaves;
+        this.aggregationStructure = aggregationStructure;
         orderedKeyBuilder = keyFactory.CreateOrderedKeyBuilder(aggregationStructure);
-    }
-
-    public IAggregationStructure AggregartionStructure { 
-        get => aggregationStructure; 
-        set
-        {
-            aggregationStructure = value;
-            orderedKeyBuilder = keyFactory.CreateOrderedKeyBuilder(value);
-        }
     }
 
     public async Task<TVector> AccumulateForSingleNodeAsync(TOrderedKey nodeKey, 
@@ -107,11 +93,6 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
             levelNodeVectors = tempLevelNodeVectors;
         }
         return res;
-    }
-
-    public IAsyncMapInternal<TUnorderedKey, TVector> GetAllLeaves()
-    {
-        return leaves;
     }
 }
 

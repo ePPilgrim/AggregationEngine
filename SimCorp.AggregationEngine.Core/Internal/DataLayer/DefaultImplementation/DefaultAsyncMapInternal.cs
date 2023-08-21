@@ -1,8 +1,9 @@
-﻿using SimCorp.AggregationEngine.Core.Key;
+﻿using SimCorp.AggregationEngine.Core.ExternalAllocator;
+using SimCorp.AggregationEngine.Core.Key;
 using System.Collections;
 using System.Collections.Concurrent;
 
-namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
+namespace SimCorp.AggregationEngine.Core.Internal.DataLayer.DefaultImplementation;
 
 internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, TValue> where TKey : notnull, IKey
 {
@@ -49,7 +50,7 @@ internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, T
     public async Task AddAsync(TKey key, TValue value, CancellationToken token)
     {
         string externalAllocatorKey = key.ToUniqueString();
-        await dataAllocator.SetAsync(new[] { KeyValuePair.Create(externalAllocatorKey,value) }, token);
+        await dataAllocator.SetAsync(new[] { KeyValuePair.Create(externalAllocatorKey, value) }, token);
         keyMap[key] = externalAllocatorKey;
     }
 
@@ -69,7 +70,7 @@ internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, T
         var allocEnumerator = positions.Select(x => KeyValuePair.Create(x.Key.ToUniqueString(), x.Value));
         await dataAllocator.SetAsync(allocEnumerator, token);
         var keyToStringKeyMapping = positions.Where(x => !keyMap.ContainsKey(x.Key)).Select(x => KeyValuePair.Create(x.Key, x.Key.ToUniqueString()));
-        foreach(var item in keyToStringKeyMapping.Distinct())
+        foreach (var item in keyToStringKeyMapping.Distinct())
         {
             keyMap[item.Key] = item.Value;
         }
@@ -79,7 +80,7 @@ internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, T
     {
         var validKeySet = keys.Where(x => keyMap.ContainsKey(x)).ToHashSet();
         var externalAllocatorKeys = validKeySet.Select(x => keyMap[x]).ToList();
-        foreach(var key in validKeySet)
+        foreach (var key in validKeySet)
         {
             keyMap.Remove(key, out _);
         }
@@ -97,16 +98,16 @@ internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, T
     public object Clone()
     {
         var domainLayer = factory.Create<TKey>(dataAllocator);
-        foreach(var key in Keys)
+        foreach (var key in Keys)
         {
-            domainLayer.TryShallowAddAsync(key, CancellationToken.None).Wait();   
+            domainLayer.TryShallowAddAsync(key, CancellationToken.None).Wait();
         }
         return domainLayer;
     }
 
     public IEnumerator<KeyValuePair<TKey, Task<TValue>>> GetEnumerator()
     {
-        foreach(var key in Keys)
+        foreach (var key in Keys)
         {
             var value = dataAllocator.GetAsync(keyMap[key], CancellationToken.None);
             yield return KeyValuePair.Create(key, value);
@@ -115,6 +116,11 @@ internal class DefaultAsyncMapInternal<TKey, TValue> : IAsyncMapInternal<TKey, T
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-       return GetEnumerator();
+        return GetEnumerator();
+    }
+
+    public string GetExternalAllocatorID()
+    {
+        return dataAllocator.GetId();
     }
 }

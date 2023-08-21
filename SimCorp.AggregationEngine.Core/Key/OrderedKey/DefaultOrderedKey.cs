@@ -13,9 +13,9 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
                              IAggregationStructure aggregationStructure,
                              IReadOnlyDictionary<AggregationLevel, string?> aggrigationLevelValues)
     {
-        this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
-        this.keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
-        AggregationStructure = aggregationStructure ?? throw new ArgumentNullException(nameof(aggregationStructure));
+        this.keyToStringHelper = keyToStringHelper;
+        this.keyBuilder = keyBuilder;
+        AggregationStructure = aggregationStructure;
         argumentValidation(aggrigationLevelValues);
         StructureValues = aggregationStructure.Select(x => aggrigationLevelValues[x]!).ToArray();
     }

@@ -7,7 +7,7 @@ public class DefaultUnorderedKey : IKey
 
     public DefaultUnorderedKey(IKeyToStringHelper keyToStringHelper, IReadOnlyDictionary<string, string?> keyValuePairs)
     {
-        this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
+        this.keyToStringHelper = keyToStringHelper;
         if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
         key = buildKey(keyValuePairs);
     }

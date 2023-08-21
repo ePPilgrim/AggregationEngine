@@ -1,11 +1,10 @@
-﻿using SimCorp.AggregationEngine.Core.DataLayer;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Internal;
-using SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
-using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 
 namespace SimCorp.AggregationEngine.Core;
 
@@ -14,92 +13,87 @@ public class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVec
                                                                                                     where TUnorderedKey : IKey
                                                                                                     where TVector : IAggregationPosition
 {
-    private readonly IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, AllocatorWrapperInternal<TVector>, TResult> aggregationCalculationInternal;
-    private readonly IAsyncExternalDataAllocator<TVector> vectorAllocator;
-    private readonly IAsyncExternalDataAllocator<TResult> resultAllocator;
-    private readonly IAsyncMapInternal<TUnorderedKey, TVector> leaves;
-    private readonly IDataLayerFactory<TVector> vectorDataLayerFactory;
-    private readonly IPositionDataLayerFactory<TVector> decoratedDataLayerFactory;
-    private readonly IUnorderedKeyFactory<TUnorderedKey> unorderedKeyFactory;
-    private readonly IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> aggregationCalculationFactory;
+    private readonly IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> internalsFactory;
+    private readonly IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory;
+    private readonly Func<TVector, IParameters, CancellationToken, Task<TResult>> calculator;
+    private readonly Func<IEnumerable<TVector>, CancellationToken, Task<TVector>> accumulator;
 
-    private readonly Func<AllocatorWrapperInternal<TVector>, IParameters, CancellationToken, Task<TResult>> calculator;
-    private readonly Func<IEnumerable<AllocatorWrapperInternal<TVector>>, CancellationToken, Task<AllocatorWrapperInternal<TVector>>> accumulator;
+    private readonly IAsyncMapVectorWrapperInternal<TUnorderedKey, TVector> leaves;
+    private readonly IAggregationCalculationBuilderInternal<TOrderedKey, TUnorderedKey, IVectorAllocatorWrapperInternal<TVector>, TResult> aggregationCalculationInternalBuilder;
+    private readonly IAggregationStructureBuilder aggregationStructureBuilder;
+
     private IAggregationStructure aggregationStructure;
-    IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory;
-    IDataLayerFactory<TResult> resultDataLayerFactory;
+    private IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, IVectorAllocatorWrapperInternal<TVector>, TResult> aggregationCalculationInternal;
 
 
-    public DefaultAsyncAggregationCalculation(  IAsyncExternalDataAllocator<TResult> dataResultAllocator,
-                                                IAsyncExternalDataAllocator<TVector> dataVectorAllocator,
+    public DefaultAsyncAggregationCalculation(  IServiceProvider internalServicesProvider,
+                                                IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory,
                                                 Func<TVector, IParameters, CancellationToken, Task<TResult>> calculator,
-                                                Func<IEnumerable<TVector>, CancellationToken, Task<TVector>> accumulator
-        )
+                                                Func<IEnumerable<TVector>, CancellationToken, Task<TVector>> accumulator)
     {
-        this.dataResultAllocator = dataResultAllocator ?? throw new ArgumentNullException(nameof(dataResultAllocator));
-        this.dataVectorAllocator = dataVectorAllocator ?? throw new ArgumentNullException(nameof(dataVectorAllocator));
-        delegateFactory = new DelegateFactory<TVector, TResult>(dataVectorAllocator, dataResultAllocator, calculator, accumulator);
-        this.calculator = delegateFactory.Calculator;
-        this.accumulator = delegateFactory.Accumulator;
+        internalsFactory = internalServicesProvider.GetRequiredService<IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult>>();
+        if(internalsFactory == null) throw new ArgumentNullException(nameof(internalsFactory));
+        this.keyFactory = keyFactory ?? throw new ArgumentNullException(nameof(keyFactory));
+        this.calculator = calculator ?? throw new ArgumentNullException(nameof(calculator));
+        this.accumulator = accumulator ?? throw new ArgumentNullException(nameof(accumulator));
 
-        aggregationCalculationInternal = new DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnorderedKey, AllocatorWrapperInternal<TVector>, TResult>(
-            keyFactory, decoratedDataLayerFactory, resultDataLayerFactory
-            );
-    }
-    public async Task<TVector> AccumulateForSingleNodeAsync(TOrderedKey nodeKey, CancellationToken token)
-    {
-        using var delegates = aggregationCalculationFactory.CreateDelegateBuilder();
-        var res = await aggregationCalculationInternal.AccumulateForSingleNodeAsync(nodeKey, delegates.Accumulator, token);
-        return await res.GetVectorAsync(token);
+        leaves = internalsFactory.CreateWrapperPositionAllocator<TUnorderedKey>();
+        aggregationStructureBuilder = keyFactory.CreateAggregationStructureBuilder();
+        aggregationCalculationInternalBuilder = internalsFactory.CreateAggregationCalculationBuilder();
+
+        aggregationStructure = aggregationStructureBuilder.BuildEmptyAggregationStructure();
+        aggregationCalculationInternal = aggregationCalculationInternalBuilder.Build(leaves, aggregationStructure); 
     }
 
-    public async Task<IDictionary<TUnorderedKey, TResult>> CalculateSingleNodeAsync(TOrderedKey nodeKey, IDictionary<TUnorderedKey, IParameters> parameters, CancellationToken token)
+    public void SetAggregationStructure(IEnumerable<AggregationLevel> aggregationStructureDesign)
     {
-        using var delegates = aggregationCalculationFactory.CreateDelegateBuilder();
-        var res = await aggregationCalculationInternal.CalculateSingleNodeAsync(nodeKey, parameters, delegates.Calculator, delegates.Accumulator, token);
-        return await res.GetAsync(parameters.Keys.ToHashSet(), token);
+        aggregationStructure = aggregationStructureBuilder.BuildFromSequence(aggregationStructureDesign);
+        aggregationCalculationInternal = aggregationCalculationInternalBuilder.Build(leaves, aggregationStructure);
     }
 
-    public async Task<IDictionary<KeyValuePair<TOrderedKey, TUnorderedKey>, TResult>> CalculateSubTreeAsync(TOrderedKey rootNodeKey, IDictionary<TUnorderedKey, IParameters> parameters, CancellationToken token)
+    public async Task UpdateOrAddAsync(IEnumerable<TVector> positions, CancellationToken token)
     {
-        using var delegates = aggregationCalculationFactory.CreateDelegateBuilder();
-        var resInMap = await aggregationCalculationInternal.CalculateSubTreeAsync(rootNodeKey, parameters, delegates.Calculator, delegates.Accumulator, token);
-        var res = await resInMap.GetAsync(resInMap.Keys.ToHashSet(), token);
-        return res.ToDictionary(x => KeyValuePair.Create(x.Key.First, x.Key.Second), x => x.Value);
+        var keyBuilder = keyFactory.CreateUnorderedKeyBuilder();
+        foreach (var position in positions)
+        {
+            await leaves.AddAsync(keyBuilder.BuildForPositions(position), position, token);
+        }
     }
 
     public IDictionary<TUnorderedKey, IMetaData> GetAllLeaves()
     {
         Dictionary<TUnorderedKey, IMetaData> res = new();
-        foreach(var item in aggregationCalculationInternal.GetAllLeaves())
+        foreach (var item in leaves)
         {
             res[item.Key] = item.Value.Result.MetaData;
         }
         return res;
     }
 
-    public async Task<IEnumerable<bool>> RemoveAsync(IEnumerable<TUnorderedKey> keys, CancellationToken token)
-    {
-        await aggregationCalculationInternal.GetAllLeaves().RemoveAsync(keys, token);
-        return await leaves.RemoveAsync(keys, token);
+    public async Task RemoveAsync(IEnumerable<TUnorderedKey> keys, CancellationToken token)
+    { 
+        await leaves.RemoveAsync(keys, token);
     }
 
-    public async Task UpdateOrAddAsync(IEnumerable<TVector> positions, CancellationToken token)
+    public async Task<TVector> AccumulateForSingleNodeAsync(TOrderedKey nodeKey, CancellationToken token)
     {
-        var keyBuilder = unorderedKeyFactory.CreateUnorderedKeyBuilder();
-        foreach(var position in positions)
-        {
-            await leaves.AddAsync(keyBuilder.BuildForPositions(position), position, token);
-        }
+        using var delegateBuilder = internalsFactory.CreateDelegateBuilder(calculator, accumulator);
+        var res = await aggregationCalculationInternal.AccumulateForSingleNodeAsync(nodeKey, delegateBuilder.BuildAccumulator(), token);
+        return await res.GetVectorAsync(token);
+    }
 
-        var leavesInteranl = aggregationCalculationInternal.GetAllLeaves();
-        foreach (var key in leaves.Keys)
-        {
-            var isSuccess = await leavesInteranl.TryShallowAddAsync(key, token);
-            if (isSuccess == false)
-            {
-                throw new KeyNotFoundException($"Inconsistent work of allocator layer. Or two different reference to the allocators");
-            }
-        }
+    public async Task<IDictionary<TUnorderedKey, TResult>> CalculateSingleNodeAsync(TOrderedKey nodeKey, IDictionary<TUnorderedKey, IParameters> parameters, CancellationToken token)
+    {
+        using var delegateBuilder = internalsFactory.CreateDelegateBuilder(calculator, accumulator);
+        var res = await aggregationCalculationInternal.CalculateSingleNodeAsync(nodeKey, parameters, delegateBuilder.BuildCalculator(), delegateBuilder.BuildAccumulator(), token);
+        return await res.GetAsync(parameters.Keys.ToHashSet(), token);
+    }
+
+    public async Task<IDictionary<KeyValuePair<TOrderedKey, TUnorderedKey>, TResult>> CalculateSubTreeAsync(TOrderedKey rootNodeKey, IDictionary<TUnorderedKey, IParameters> parameters, CancellationToken token)
+    {
+        using var delegateBuilder = internalsFactory.CreateDelegateBuilder(calculator, accumulator);
+        var resInMap = await aggregationCalculationInternal.CalculateSubTreeAsync(rootNodeKey, parameters, delegateBuilder.BuildCalculator(), delegateBuilder.BuildAccumulator(), token);
+        var res = await resInMap.GetAsync(resInMap.Keys.ToHashSet(), token);
+        return res.ToDictionary(x => KeyValuePair.Create(x.Key.First, x.Key.Second), x => x.Value);
     }
 }

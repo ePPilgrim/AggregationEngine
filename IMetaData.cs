@@ -43,9 +43,11 @@ public interface IMetaData
     [AggregationLevel(AggregationLevel.Security)]
     public int SecurityIK { get; set; }
     [AggregationLevel(AggregationLevel.Currency)]
-    public double Currency { get; set; }
+    public int Currency { get; set; }
     public int HoldingIK { get; set; }  
     public string? Name { get; set; }    
 }
+
+
 
 

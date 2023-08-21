@@ -5,8 +5,6 @@ VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AggregationEngine", "AggregationEngine.csproj", "{847DC4AA-18DA-4650-99E0-8B08FCFF1D78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AggregationEngine.Core", "AggregationEngine.Core\AggregationEngine.Core.csproj", "{31E31BB4-B1A9-44B5-ABC2-5C8C656E8C70}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimCorp.AggregationEngine.Core", "SimCorp.AggregationEngine.Core\SimCorp.AggregationEngine.Core.csproj", "{805A391D-F270-4CE1-8C58-C84F4B583300}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{847DC4AA-18DA-4650-99E0-8B08FCFF1D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{847DC4AA-18DA-4650-99E0-8B08FCFF1D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{847DC4AA-18DA-4650-99E0-8B08FCFF1D78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31E31BB4-B1A9-44B5-ABC2-5C8C656E8C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31E31BB4-B1A9-44B5-ABC2-5C8C656E8C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31E31BB4-B1A9-44B5-ABC2-5C8C656E8C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31E31BB4-B1A9-44B5-ABC2-5C8C656E8C70}.Release|Any CPU.Build.0 = Release|Any CPU
 		{805A391D-F270-4CE1-8C58-C84F4B583300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{805A391D-F270-4CE1-8C58-C84F4B583300}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{805A391D-F270-4CE1-8C58-C84F4B583300}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -6,11 +6,10 @@ public class DefaultUnorderedKeyBuilder : IUnorderedKeyBuilder<DefaultUnorderedK
 {
     private readonly IKeyPropertySelector keyPropertySelector;
     private readonly IKeyToStringHelper keyToStringHelper;
-    public DefaultUnorderedKeyBuilder(IKeyPropertySelector keyPropertySelector,
-                                        IKeyToStringHelper keyToStringHelper)
+    public DefaultUnorderedKeyBuilder(IKeyPropertySelector keyPropertySelector, IKeyToStringHelper keyToStringHelper)
     {
-        this.keyPropertySelector = keyPropertySelector ?? throw new ArgumentNullException(nameof(keyPropertySelector));
-        this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
+        this.keyPropertySelector = keyPropertySelector;
+        this.keyToStringHelper = keyToStringHelper;
     }
 
     public DefaultUnorderedKey BuildForParameters<T>(T parameters) where T : IParameters

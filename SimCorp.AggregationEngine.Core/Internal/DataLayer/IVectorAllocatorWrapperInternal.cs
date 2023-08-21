@@ -1,7 +1,7 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Key;
 
-namespace SimCorp.AggregationEngine.Core.DataLayer;
+namespace SimCorp.AggregationEngine.Core.Internal.DataLayer;
 
 internal interface IVectorAllocatorWrapperInternal<TVector> : IMetaData where TVector : IAggregationPosition
 {
@@ -10,4 +10,5 @@ internal interface IVectorAllocatorWrapperInternal<TVector> : IMetaData where TV
     public DateTime TimeStamp { get; }
     public IMetaData MetaData { get; }
     public IKey Key { get; }
+    string GetExternalAllocatorID();
 }

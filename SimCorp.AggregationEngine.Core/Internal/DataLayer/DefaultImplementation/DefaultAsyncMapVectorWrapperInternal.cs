@@ -1,23 +1,22 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
 using System.Collections;
 
-namespace SimCorp.AggregationEngine.Core.DataLayer.DefaultImplementation;
+namespace SimCorp.AggregationEngine.Core.Internal.DataLayer.DefaultImplementation;
 
-internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVectorWrapperInternal<TKey, TVector>  where TKey : IKey
+internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVectorWrapperInternal<TKey, TVector> where TKey : IKey
                                                                                                                     where TVector : IAggregationPosition
-    
+
 {
     private readonly IAsyncMapInternal<TKey, TVector> internalAllocator;
-    private readonly IAsyncExternalDataAllocator<TVector> dataAllocator;
     private readonly IDictionary<TKey, IVectorAllocatorWrapperInternal<TVector>> mapToVectors;
     private readonly IPositionDataLayerFactory<TVector> factory;
 
-    public DefaultAsyncMapVectorWrapperInternal(IAsyncExternalDataAllocator<TVector> dataAllocator, IPositionDataLayerFactory<TVector> factory)
+    public DefaultAsyncMapVectorWrapperInternal(IAsyncMapInternal<TKey, TVector> internalDataAllocator, IPositionDataLayerFactory<TVector> factory)
     {
-        this.dataAllocator = dataAllocator ?? throw new ArgumentNullException(nameof(dataAllocator));
         this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-        internalAllocator = factory.Create<TKey>();
+        internalAllocator = internalAllocator ?? throw new ArgumentNullException(nameof(internalAllocator));
         mapToVectors = new Dictionary<TKey, IVectorAllocatorWrapperInternal<TVector>>();
     }
 
@@ -56,11 +55,17 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
 
     public async Task AddAsync(TKey key, IVectorAllocatorWrapperInternal<TVector> value, CancellationToken token)
     {
-        var isSuccess = await TryShallowAddAsync(key, token);
-        if(isSuccess == false)
+        var isSuccess = value.GetExternalAllocatorID() == GetExternalAllocatorID();
+        if (isSuccess)
         {
-            await UpdateOrAddAsync(new[] {KeyValuePair.Create(key, value)}, token);   
+            isSuccess = await internalAllocator.TryShallowAddAsync(key, token);
         }
+        if (isSuccess == false)
+        {
+            var wrappedVector = value.GetVector();
+            await internalAllocator.AddAsync(key, wrappedVector, token);
+        }
+        mapToVectors[key] = value;
     }
 
     public Task<bool> TryShallowAddAsync(TKey key, CancellationToken token)
@@ -71,9 +76,10 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
 
     public async Task UpdateOrAddAsync(IEnumerable<KeyValuePair<TKey, IVectorAllocatorWrapperInternal<TVector>>> positions, CancellationToken token)
     {
-        //foreach()
-
-        //await internalAllocator.UpdateOrAddAsync(positions.Select(x => KeyValuePair.Create(x.Key, )))
+        foreach (var position in positions)
+        {
+            await AddAsync(position.Key, position.Value, token);
+        }
     }
 
     public async Task RemoveAsync(IEnumerable<TKey> keys, CancellationToken token)
@@ -85,10 +91,19 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
         }
     }
 
+    public string GetExternalAllocatorID()
+    {
+        return internalAllocator.GetExternalAllocatorID();
+    }
+
     public object Clone()
     {
         var newMap = factory.Create(internalAllocator);
-        
+        foreach (var item in mapToVectors)
+        {
+            newMap.AddAsync(item.Key, item.Value, CancellationToken.None).Wait();
+        }
+        return newMap;
     }
 
     public void Dispose()
@@ -99,21 +114,22 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
 
     public IEnumerator<KeyValuePair<TKey, Task<IVectorAllocatorWrapperInternal<TVector>>>> GetEnumerator()
     {
-        throw new NotImplementedException();
+        foreach (var item in mapToVectors)
+        {
+            yield return KeyValuePair.Create(item.Key, Task.FromResult(item.Value));
+        }
     }
-
-
-
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        throw new NotImplementedException();
+        return GetEnumerator();
     }
-    
+
     private IVectorAllocatorWrapperInternal<TVector> buildAllocatorWrapperInternal(TKey key, TVector value)
     {
         return new AllocatorWrapperInternal(key, value.MetaData, internalAllocator);
     }
+
     private class AllocatorWrapperInternal : IVectorAllocatorWrapperInternal<TVector>
     {
         private readonly IMetaData metaData;
@@ -138,8 +154,8 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
             return res.Result;
         }
 
+        public string GetExternalAllocatorID() => allocator.GetExternalAllocatorID();
         public DateTime TimeStamp { get; set; }
-
         public IMetaData MetaData => metaData;
         public IKey Key => key;
     }

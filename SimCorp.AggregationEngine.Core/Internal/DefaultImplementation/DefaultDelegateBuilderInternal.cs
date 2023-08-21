@@ -1,5 +1,5 @@
-﻿using SimCorp.AggregationEngine.Core.DataLayer;
-using SimCorp.AggregationEngine.Core.Domain;
+﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
 namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
@@ -26,22 +26,28 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
     }
 
 
-    public Func<AllocatorWrapperInternal<TVector>, IParameters, CancellationToken, Task<TResult>> Calculator => calculator;
+    public Func<IVectorAllocatorWrapperInternal<TVector>, IParameters, CancellationToken, Task<TResult>> BuildCalculator()
+    {
+        return calculator;
+    }
 
-    public Func<IEnumerable<AllocatorWrapperInternal<TVector>>, TKey, CancellationToken, Task<AllocatorWrapperInternal<TVector>>> Accumulator => accumulator;
+    public Func<IEnumerable<IVectorAllocatorWrapperInternal<TVector>>, TKey, CancellationToken, Task<IVectorAllocatorWrapperInternal<TVector>>> BuildAccumulator()
+    {
+        return accumulator;
+    }
 
     public void Dispose()
     {
         allocator.Dispose();
     }
 
-    private async Task<TResult> calculator(AllocatorWrapperInternal<TVector> vector, IParameters parameter, CancellationToken token)
+    private async Task<TResult> calculator(IVectorAllocatorWrapperInternal<TVector> vector, IParameters parameter, CancellationToken token)
     {
         var wrappedVector = await vector.GetVectorAsync(token);
         return await innerCalculator(wrappedVector, parameter, token);
     }
 
-    private async Task<AllocatorWrapperInternal<TVector>> accumulator(IEnumerable<AllocatorWrapperInternal<TVector>> vectors, TKey key, CancellationToken token)
+    private async Task<IVectorAllocatorWrapperInternal<TVector>> accumulator(IEnumerable<IVectorAllocatorWrapperInternal<TVector>> vectors, TKey key, CancellationToken token)
     {
         List<TVector> subVectors = new();
         int i = 0;

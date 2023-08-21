@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "qCtiKuiZV0zMPjbFzYinem4lRZZiznomDLCzlUqlRvdwvngqV/mjp7ltwQFEIBmjj9a/+lJSFLoERLiTun5qNw==",
+  "dgSpecHash": "yGQP920NNQG/GsXQQcqDk042+QC0sEdi0SidsFqM1LilIRncSJtQOY1anBmsI71WD8vpdkx7AvXP6rnqgQVECg==",
   "success": true,
   "projectFilePath": "C:\\Users\\demyd\\Practice\\AggregationEngine\\SimCorp.AggregationEngine.Core\\SimCorp.AggregationEngine.Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\demyd\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
+    "C:\\Users\\demyd\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
+    "C:\\Users\\demyd\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\demyd\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
     "C:\\Users\\demyd\\.nuget\\packages\\stackexchange.redis\\2.6.122\\stackexchange.redis.2.6.122.nupkg.sha512",
     "C:\\Users\\demyd\\.nuget\\packages\\system.io.pipelines\\5.0.1\\system.io.pipelines.5.0.1.nupkg.sha512",

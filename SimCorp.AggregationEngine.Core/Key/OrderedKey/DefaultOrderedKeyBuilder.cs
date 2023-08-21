@@ -14,8 +14,8 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
                                     IAggregationStructureBuilder aggregationStructureBuilder,
                                     IAggregationStructure aggregationStructure)
     {
-        this.keyPropertySelector = keyPropertySelector ?? throw new ArgumentNullException(nameof(keyPropertySelector));
-        this.keyToStringHelper = keyToStringHelper ?? throw new ArgumentNullException(nameof(keyToStringHelper));
+        this.keyPropertySelector = keyPropertySelector;
+        this.keyToStringHelper = keyToStringHelper;
         this.aggregationStructure = aggregationStructure ?? throw new ArgumentNullException(nameof(aggregationStructure));
         this.aggregationStructureBuilder = aggregationStructureBuilder ?? throw new ArgumentNullException(nameof(aggregationStructureBuilder));
     }
@@ -25,6 +25,11 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
         var dict = new Dictionary<AggregationLevel, string?>();
         foreach (var aggregationLevel in aggregationStructure)
         {
+            if(aggregationLevel == AggregationLevel.Top)
+            {
+                dict.Add(AggregationLevel.Top, "All");
+                continue;
+            }
             dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel(metaData, aggregationLevel).Value);
         }
         return new DefaultOrderedKey(this, keyToStringHelper, aggregationStructure, dict);

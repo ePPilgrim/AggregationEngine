@@ -14,8 +14,9 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
     private int randomWriteFrom = 100; //millisecond
     private int randomWriteTo = 1100; //millisecond
 
-    public DummyAsyncExternalDataAllocator(int Id)
+    public DummyAsyncExternalDataAllocator(int Id = 0)
     {
+        random = new Random();
         data = new ConcurrentDictionary<string, AllocNode>();
         this.Id = Id;
     }
@@ -27,9 +28,9 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
         AllocNode? node;
         if (data.TryGetValue(key, out node))
         {
-            return await Task.FromResult(JsonSerializer.Deserialize<T>(node.Data));
+            return await Task.FromResult(JsonSerializer.Deserialize<T>(node.Data)!);
         }
-        return default;
+        return default(T);
     }
 
     public async IAsyncEnumerable<T> FetchAsAsyncSequence(IEnumerable<string> keys)
@@ -41,7 +42,7 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
             AllocNode? node;
             if (data.TryGetValue(key, out node))
             {
-                yield return JsonSerializer.Deserialize<T>(node.Data);
+                yield return JsonSerializer.Deserialize<T>(node.Data)!;
             }
             else
             {
@@ -60,7 +61,7 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
             AllocNode? node;
             if (data.TryGetValue(key, out node))
             {
-                dict[key] = JsonSerializer.Deserialize<T>(node.Data);
+                dict[key] = JsonSerializer.Deserialize<T>(node.Data)!;
             }
             else
             {
@@ -104,10 +105,11 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
             int interval = random.Next(randomReadFrom, randomReadTo);
             await Task.Delay(interval, token);
             AllocNode? node;
-            if (data.TryGetValue(key, out node))
+            if (!data.TryGetValue(key, out node))
             {
-                node.RefCount--;
+                continue;
             }
+            node.RefCount--;
             if (node.RefCount == 0)
             {
                 data.TryRemove(KeyValuePair.Create(key, node));

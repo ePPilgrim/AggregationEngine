@@ -1,8 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.ExternalAllocator;
 using SimCorp.AggregationEngine.Core.Internal;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer.DefaultImplementation;
+using SimCorp.AggregationEngine.Core.Internal.DataLayer;
+using SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
+using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 
 namespace SimCorp.AggregationEngine.Core;
 
@@ -15,9 +20,18 @@ public class DefaultAggregationCalculationBuilder<TOrderedKey, TUnorderedKey, TV
 
     public DefaultAggregationCalculationBuilder(IServiceProvider serviceProvider)
     {
+        //var t1 = serviceProvider.GetRequiredService<IKeyPropertySelector>();
+        //var t2 = serviceProvider.GetRequiredService<IKeyToStringHelper>();
+        //var t3 = serviceProvider.GetRequiredService<IAsyncExternalDataAllocator<TVector>>();
+        //var t4 = serviceProvider.GetRequiredService<IAsyncExternalDataAllocator<TResult>>();
+        //var t5 = serviceProvider.GetRequiredService<IKeyFactory<DefaultOrderedKey, DefaultUnorderedKey>>();
+        //var t6 = serviceProvider.GetRequiredService<IPositionDataLayerFactory<TVector>>();
+        //var t7 = serviceProvider.GetRequiredService<IDataLayerFactory<TResult>>();
+        //var t8 = serviceProvider.GetRequiredService<IOptimizationPolicyInternal>();
+
+
         keyFactory = serviceProvider.GetRequiredService<IKeyFactory<TOrderedKey, TUnorderedKey>>();
         if (keyFactory == null) throw new ArgumentNullException(nameof(keyFactory));
-        //var oo = serviceProvider.GetRequiredService<IOptimizationPolicyInternal>();
         internalsFactory = serviceProvider.GetRequiredService<IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult>>();
         if (internalsFactory == null) throw new ArgumentNullException(nameof(internalsFactory));
 

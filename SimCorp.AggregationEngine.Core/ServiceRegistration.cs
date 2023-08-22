@@ -20,8 +20,9 @@ public static class ServiceRegistration
         services.AddSingleton<IAsyncExternalDataAllocator<TVector>, DummyAsyncExternalDataAllocator<TVector>>();
         services.AddSingleton<IAsyncExternalDataAllocator<TResult>, DummyAsyncExternalDataAllocator<TResult>>();
         services.AddTransient<IKeyFactory<DefaultOrderedKey, DefaultUnorderedKey>, DefaultKeyFactory>();
-        services.AddTransient<IPositionDataLayerFactory<TVector>, DefaultPositionDataLayerFactory<TVector>>();
+        services.AddTransient<IDataLayerFactory<TVector>, DefaultDataLayerFactory<TVector>>();
         services.AddTransient<IDataLayerFactory<TResult>, DefaultDataLayerFactory<TResult>>();
+        services.AddTransient<IPositionDataLayerFactory<TVector>, DefaultPositionDataLayerFactory<TVector>>();
         services.AddTransient<IOptimizationPolicyInternal, DefaultOptimizationPolicyInternal>();
         services.AddTransient<IAggregationCalculationFactoryInternal<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>, DefaultAggregationCalculationFactoryInternal<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>>();
         services.AddTransient<IAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>>(x => new DefaultAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>(x));

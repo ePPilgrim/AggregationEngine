@@ -13,10 +13,10 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
     private readonly IDictionary<TKey, IVectorAllocatorWrapperInternal<TVector>> mapToVectors;
     private readonly IPositionDataLayerFactory<TVector> factory;
 
-    public DefaultAsyncMapVectorWrapperInternal(IAsyncMapInternal<TKey, TVector> internalDataAllocator, IPositionDataLayerFactory<TVector> factory)
+    public DefaultAsyncMapVectorWrapperInternal(IAsyncMapInternal<TKey, TVector> internalAllocator, IPositionDataLayerFactory<TVector> factory)
     {
         this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-        internalAllocator = internalAllocator ?? throw new ArgumentNullException(nameof(internalAllocator));
+        this.internalAllocator = internalAllocator ?? throw new ArgumentNullException(nameof(internalAllocator));
         mapToVectors = new Dictionary<TKey, IVectorAllocatorWrapperInternal<TVector>>();
     }
 

@@ -6,7 +6,6 @@ public interface IAggregationStructure : IEnumerable<AggregationLevel>, IEquatab
 {
     bool IsPrefixOf(IAggregationStructure aggregateStructure);
     bool IsEmpty();
-    AggregationLevel Pop();
-    AggregationLevel Peek();
     IAggregationStructure GetSubStructureAt(AggregationLevel aggregationLevel);
+    AggregationLevel this[int index] { get; }
 }

@@ -22,8 +22,11 @@ public class DefaultUnorderedKeyBuilder : IUnorderedKeyBuilder<DefaultUnorderedK
         var dict = new Dictionary<string, string?>();
         foreach (var aggregationLevel in (AggregationLevel[])Enum.GetValues(typeof(AggregationLevel)))
         {
-            var item = keyPropertySelector.GetPropertyWithAggregationLevel(vector, aggregationLevel);
-            dict.Add(item.Key, item.Value);
+            if (aggregationLevel != AggregationLevel.None && aggregationLevel != AggregationLevel.Top)
+            {
+                var item = keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(vector, aggregationLevel);
+                dict.Add(item.Key, item.Value);
+            }
         }
         return new DefaultUnorderedKey(keyToStringHelper, dict);
     }

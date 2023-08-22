@@ -9,13 +9,16 @@ public class MonteCarloAnalytics : IAnalytics<AggregationPosition, double>
 {
     private readonly IAsyncAggrecationCalculation<DefaultOrderedKey, DefaultUnorderedKey, AggregationPosition, double> aggregationCalculation;
 
+    
+
     public MonteCarloAnalytics(IAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, AggregationPosition, double> calculationBuilder)
     {
         aggregationCalculation = calculationBuilder.Build(calculator, accumulator);
     }
     public async Task<AggregationPosition> AccumulateForSingleNodeAsync(DefaultOrderedKey nodeKey, CancellationToken token)
     {
-        return await aggregationCalculation.AccumulateForSingleNodeAsync(nodeKey, token);
+        //return await aggregationCalculation.AccumulateForSingleNodeAsync(nodeKey, token);
+        return aggregationCalculation.AccumulateForSingleNodeAsync(nodeKey, token).Result;
     }
 
     public async Task<IDictionary<DefaultUnorderedKey, double>> CalculateSingleNodeAsync(DefaultOrderedKey nodeKey, IDictionary<DefaultUnorderedKey, IParameters> parameters, CancellationToken token)
@@ -50,13 +53,22 @@ public class MonteCarloAnalytics : IAnalytics<AggregationPosition, double>
 
     private async Task<double> calculator(AggregationPosition aggregationPosition, IParameters parameters, CancellationToken token)
     {
-        //TODO implement
-        return await Task.FromResult(0.0);
+        var scenarios = aggregationPosition.Scenarious;
+        if(scenarios == null)
+        {
+            throw new Exception("Scenario array could not be null!");
+        }
+        return await Task.FromResult(scenarios[3]);
     }
 
     private async Task<AggregationPosition> accumulator(IEnumerable<AggregationPosition> aggregationPositions, CancellationToken token)
     {
-        //TODO implement
-        return await Task.FromResult(new AggregationPosition());
+        var fvec = aggregationPositions.First();
+        var res = new AggregationPosition(fvec);
+        foreach(var position in aggregationPositions.Skip(1))
+        {
+            res.DoAdditionOperation(position);
+        }
+        return await Task.FromResult(res);
     }
 }

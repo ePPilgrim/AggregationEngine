@@ -1,8 +1,6 @@
 ﻿namespace SimCorp.AggregationEngine.Core.Domain;
 
-public interface IAggregationPosition : IMetaData, IScalingData, IVector
+public interface IAggregationPosition : IMetaData
 {
-    IMetaData MetaData { get; }
-    IScalingData ScalingData { get; }
-    IVector Values { get; }
+    void DoAdditionOperation(IAggregationPosition aggregationPosition);
 }

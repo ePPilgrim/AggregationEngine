@@ -49,6 +49,7 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
 
     private async Task<IVectorAllocatorWrapperInternal<TVector>> accumulator(IEnumerable<IVectorAllocatorWrapperInternal<TVector>> vectors, TKey key, CancellationToken token)
     {
+        Console.WriteLine(vectors.Count());
         List<TVector> subVectors = new();
         int i = 0;
         int n = optimizationPolicy.VectorChankSize;
@@ -56,10 +57,12 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
         {
             i++;
             var subVector  = await vector.GetVectorAsync(token);
+            //var subVector = vector.GetVectorAsync(token).Result;
             subVectors.Add(subVector);
             if (i == n)
             {
                 var resultedWrappedVector = await innerAccumulator(subVectors, token);
+                //var resultedWrappedVector = innerAccumulator(subVectors, token).Result;
                 subVectors.Clear();
                 subVectors.Add(resultedWrappedVector);
                 n = optimizationPolicy.VectorChankSize + i - 1;
@@ -68,9 +71,12 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
         if (subVectors.Count > 1)
         {
             var vector = await innerAccumulator(subVectors, token);
+            //var vector = innerAccumulator(subVectors, token).Result;
             subVectors.Clear();
             subVectors.Add(vector);
         }
+       // var res = allocator.AddAsync(key, subVectors.First(), token).Result;
+        //return res;
         return await allocator.AddAsync(key, subVectors.First(), token);
     }
 }

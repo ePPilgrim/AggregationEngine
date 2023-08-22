@@ -1,4 +1,5 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Key.KeyAttributes;
 
 namespace AggregationEngine.MonteCarlo;
 
@@ -11,5 +12,6 @@ public class MonteCarloParameters : IParameters
         return otherMCParameters.ConfidenceLevel == this.ConfidenceLevel;
     }
 
+    [KeyProperty]
     public double ConfidenceLevel {get;set;}
 }

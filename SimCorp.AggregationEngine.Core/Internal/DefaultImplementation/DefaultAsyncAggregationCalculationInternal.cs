@@ -34,6 +34,9 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
     {
         var accumulatedVectors = leaves.GetAllValues().Where(x => nodeKey.IsPrefixOf(orderedKeyBuilder.Build(x)));
         return await accumulator(accumulatedVectors, nodeKey, token);
+        //var accumulatedVectors = leaves.GetAllValues().Where(x => nodeKey.IsPrefixOf(orderedKeyBuilder.Build((IMetaData)x))).ToList();
+        //var res = accumulator(accumulatedVectors, nodeKey, token).Result;
+        //return res;
     }
 
     public async Task<IAsyncMapInternal<TUnorderedKey, TResult>> CalculateSingleNodeAsync(TOrderedKey nodeKey,
@@ -63,15 +66,17 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
         var res = resultDataLayerFactory.Create<DualKey<TOrderedKey, TUnorderedKey>>();
         using var tempLeaves = (IAsyncMapInternal<TUnorderedKey,TVector>)leaves.Clone();
 
-        var levelNodeVectors = tempLeaves.GetAllValues().Select(x => KeyValuePair.Create(orderedKeyBuilder.Build(x),x)).Where(x => rootNodeKey.IsPrefixOf(x.Key));
+        var levelNodeVectors = tempLeaves.GetAllValues().Select(x => KeyValuePair.Create(orderedKeyBuilder.Build(x),x)).Where(x => rootNodeKey.IsPrefixOf(x.Key)).ToList();
 
-        foreach (var level in aggregationStructure)
+        foreach (var level in aggregationStructure.Reverse()) // from leaves to top nodes 
         {
             var subStructure = aggregationStructure.GetSubStructureAt(level);
             List<KeyValuePair<TOrderedKey, TVector>> tempLevelNodeVectors = new();
+            var ttt = levelNodeVectors.GroupBy(x => x.Key.GetSubKey(subStructure).ToUniqueString()).ToDictionary(x => x.Key, x => x);
             foreach (var grp in levelNodeVectors.GroupBy(x => x.Key.GetSubKey(subStructure)))
             {
-                var accumulatedVector = await accumulator(grp.Select(x => x.Value), grp.Key , token);
+                //var accumulatedVector = await accumulator(grp.Select(x => x.Value), grp.Key , token);
+                var accumulatedVector = accumulator(grp.Select(x => x.Value), grp.Key, token).Result;
                 tempLevelNodeVectors.Add(KeyValuePair.Create(grp.Key, accumulatedVector));
             }
 
@@ -81,10 +86,12 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                 foreach (var item in parameters)
                 {
                     var key = new DualKey<TOrderedKey,TUnorderedKey>(node.Key, item.Key);
-                    resultAsync[key] = calculator(node.Value, item.Value, token);
+                    resultAsync.TryAdd(key, calculator(node.Value, item.Value, token));
+                    //resultAsync[key] = calculator(node.Value, item.Value, token);
                 }
-                await Task.WhenAll(resultAsync.Values);
-                await res.UpdateOrAddAsync(resultAsync.Select(x => KeyValuePair.Create(x.Key, x.Value.Result)), token);
+                Task.WhenAll(resultAsync.Values).Wait();
+                //await Task.WhenAll(resultAsync.Values);
+                res.UpdateOrAddAsync(resultAsync.Select(x => KeyValuePair.Create(x.Key, x.Value.Result)), token).Wait();
             }
 
             if (rootNodeKey.GetSubKey(subStructure).IsEmpty()) continue;

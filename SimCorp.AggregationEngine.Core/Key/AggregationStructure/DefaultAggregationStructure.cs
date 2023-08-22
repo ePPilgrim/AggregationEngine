@@ -1,4 +1,5 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
+using System;
 using System.Collections;
 
 namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
@@ -6,21 +7,12 @@ namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
 public class DefaultAggregationStructure : IAggregationStructure
 {
     private readonly IAggregationStructureBuilder builder;
-    private readonly Stack<AggregationLevel> stack;
+    private readonly List<AggregationLevel> structure;
 
-    public DefaultAggregationStructure(Stack<AggregationLevel> structuredUniqueAggregationLevels, IAggregationStructureBuilder builder) 
+    public DefaultAggregationStructure(IEnumerable<AggregationLevel> structuredUniqueAggregationLevels, IAggregationStructureBuilder builder) 
     {
-        this.builder = builder ?? throw new ArgumentNullException(nameof(builder));
-        stack = new Stack<AggregationLevel>();
-        if (structuredUniqueAggregationLevels.ToHashSet().Count() != structuredUniqueAggregationLevels.Count)
-        {
-            throw new ArgumentException($"Aggregation levels must be unique in the aggregation structure.");
-        }
-        if (structuredUniqueAggregationLevels.Any(x => x == AggregationLevel.None))
-        {
-            throw new ArgumentException($"Aggregation structure must not contain None aggregation level.");
-        }
-        stack = structuredUniqueAggregationLevels;
+        this.builder = builder;
+        structure = structuredUniqueAggregationLevels.ToList();
     }
 
     public bool Equals(IAggregationStructure? other)
@@ -31,52 +23,44 @@ public class DefaultAggregationStructure : IAggregationStructure
 
     public IEnumerator<AggregationLevel> GetEnumerator()
     {
-        return stack.Reverse().GetEnumerator();
+        foreach(var item in structure)
+        {
+            yield return item;
+        }
     }
 
     public IAggregationStructure GetSubStructureAt(AggregationLevel aggregationLevel)
     {
-        var subStructure = builder.BuildFromSequence(this);
-        foreach (var level in subStructure)
+        if (structure.All(x => x != aggregationLevel))
         {
-            if (level == subStructure.Peek()) break;
-            subStructure.Pop();
+            return builder.BuildEmptyAggregationStructure();
         }
-        return subStructure;
+        int idex = structure.FindIndex(x => x == aggregationLevel);
+        return builder.BuildFromSequence(Enumerable.Range(0, idex + 1).Select(pos => structure[pos]));
     }
 
     public bool IsEmpty()
     {
-        return stack.Count == 0;
+        return structure.Count == 0;
     }
 
     public bool IsPrefixOf(IAggregationStructure aggregateStructure)
     {
-        if (!ReferenceEquals(this, aggregateStructure)) return false;
-        if (stack.Count > aggregateStructure.Count()) return false;
+        var castedAggregationStructure = aggregateStructure as DefaultAggregationStructure;
+        if (ReferenceEquals(null, castedAggregationStructure)) return false;
+        if (structure.Count > aggregateStructure.Count()) return false;
         if (IsEmpty()) return true;
-        int index = stack.Count - 1;
-        var stackArray = stack.ToArray();
-        foreach (var item in aggregateStructure)
+        for(int i = structure.Count - 1; i >= 0; --i)
         {
-            if (index < 0) break;
-            if (stackArray[index--] != item) return false;
+            if (aggregateStructure[i] != structure[i]) return false;
         }
+
         return true;
     }
-
-    public AggregationLevel Peek()
-    {
-        return stack.Peek();
-    }
-
-    public AggregationLevel Pop()
-    {
-        return stack.Pop();
-    }
+    public AggregationLevel this[int index] => structure[index];
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return stack.GetEnumerator();
+        return structure.GetEnumerator();
     }
 }

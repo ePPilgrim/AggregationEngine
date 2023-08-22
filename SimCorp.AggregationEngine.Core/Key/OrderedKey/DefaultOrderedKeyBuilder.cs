@@ -30,7 +30,7 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
                 dict.Add(AggregationLevel.Top, "All");
                 continue;
             }
-            dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel(metaData, aggregationLevel).Value);
+            dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(metaData, aggregationLevel).Value);
         }
         return new DefaultOrderedKey(this, keyToStringHelper, aggregationStructure, dict);
     }
@@ -42,7 +42,7 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
 
     public DefaultOrderedKey BuildSubKey(DefaultOrderedKey key, IAggregationStructure subAggregationStructure)
     {
-        if (subAggregationStructure.IsPrefixOf(aggregationStructure))
+        if (!subAggregationStructure.IsPrefixOf(aggregationStructure))
         {
             return BuildEmptyKey();
         }

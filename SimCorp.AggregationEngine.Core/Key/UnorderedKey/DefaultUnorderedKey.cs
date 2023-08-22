@@ -24,6 +24,11 @@ public class DefaultUnorderedKey : IKey
         return key;
     }
 
+    public override string ToString()
+    {
+        return key;
+    }
+
     private string buildKey(IReadOnlyDictionary<string, string?> keyValuePairs)
     {
         var orderedSequence = keyValuePairs.Where(x => x.Value != null).OrderByDescending(x => x.Key);

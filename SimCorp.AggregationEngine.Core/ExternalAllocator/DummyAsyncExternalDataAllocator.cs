@@ -9,10 +9,10 @@ internal class DummyAsyncExternalDataAllocator<T> : IAsyncExternalDataAllocator<
     private readonly int Id;
     private readonly Random random;
     private int randomReadFrom = 10; //millisecond
-    private int randomReadTo = 900; //millisecond
+    private int randomReadTo = 90; //millisecond
 
-    private int randomWriteFrom = 100; //millisecond
-    private int randomWriteTo = 1100; //millisecond
+    private int randomWriteFrom = 10; //millisecond
+    private int randomWriteTo = 110; //millisecond
 
     public DummyAsyncExternalDataAllocator(int Id = 0)
     {

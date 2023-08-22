@@ -23,6 +23,6 @@ public class DefaultAggregatonStructureBuilder : IAggregationStructureBuilder
         {
             throw new ArgumentException("Input sequence for aggregation structure must be unique.");
         }
-        return new DefaultAggregationStructure(new Stack<AggregationLevel>(uniqueOrderedSequenceOfAggregationLevels), this);
+        return new DefaultAggregationStructure(uniqueOrderedSequenceOfAggregationLevels, this);
     }
 }

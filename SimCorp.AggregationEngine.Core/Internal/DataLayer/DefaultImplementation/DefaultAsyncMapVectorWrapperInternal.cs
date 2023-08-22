@@ -1,6 +1,7 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
+using SimCorp.AggregationEngine.Core.Key.KeyAttributes;
 using System.Collections;
 
 namespace SimCorp.AggregationEngine.Core.Internal.DataLayer.DefaultImplementation;
@@ -127,7 +128,7 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
 
     private IVectorAllocatorWrapperInternal<TVector> buildAllocatorWrapperInternal(TKey key, TVector value)
     {
-        return new AllocatorWrapperInternal(key, value.MetaData, internalAllocator);
+        return new AllocatorWrapperInternal(key, value, internalAllocator);
     }
 
     private class AllocatorWrapperInternal : IVectorAllocatorWrapperInternal<TVector>
@@ -158,5 +159,14 @@ internal class DefaultAsyncMapVectorWrapperInternal<TKey, TVector> : IAsyncMapVe
         public DateTime TimeStamp { get; set; }
         public IMetaData MetaData => metaData;
         public IKey Key => key;
+
+        public int? PositionIK { get => MetaData.PositionIK; set => MetaData.PositionIK = value; }
+        public int? SecurityIK { get => MetaData.SecurityIK; set => MetaData.SecurityIK = value; }
+        public int? HoldingIK { get => MetaData.HoldingIK; set => MetaData.HoldingIK = value; }
+        public string? Currency { get => MetaData.Currency; set => MetaData.Currency = value; }
+        public string? Portfolio { get => MetaData.Portfolio; set => MetaData.Portfolio = value; }
+        public string? FreeCode1 { get => MetaData.FreeCode1; set => MetaData.FreeCode1 = value; }
+        public string? FreeCode2 { get => MetaData.FreeCode2; set => MetaData.FreeCode2 = value; }
+        public string? FreeCode3 { get; set; }
     }
 }

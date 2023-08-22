@@ -32,9 +32,13 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
         return false;
     }
 
+    public override int GetHashCode()
+    {
+        return ToUniqueString().GetHashCode();
+    }
+
     public DefaultOrderedKey GetSubKey(IAggregationStructure subAggregationStructure)
     {
-        if (!subAggregationStructure.IsPrefixOf(AggregationStructure)) return keyBuilder.BuildEmptyKey();
         return keyBuilder.BuildSubKey(this, subAggregationStructure);
     }
 
@@ -45,12 +49,23 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
 
     public bool IsPrefixOf(DefaultOrderedKey otherKey)
     {
-        return AggregationStructure.IsPrefixOf(otherKey.AggregationStructure);
+        if(StructureValues.Length > otherKey.StructureValues.Length) return false;  
+        for(int i = StructureValues.Length - 1; i >= 0; i--)
+        {
+            if (AggregationStructure[i] != otherKey.AggregationStructure[i]) return false;
+            if (StructureValues[i] != otherKey.StructureValues[i]) return false;
+        }
+        return true;
     }
 
     public string ToUniqueString()
     {
         return keyToStringHelper.OrderKeyToStringKey(AggregationStructure.Select(x => x.ToString()).ToArray(), StructureValues);
+    }
+
+    public override string ToString()
+    {
+        return ToUniqueString();
     }
 
     private void argumentValidation(IReadOnlyDictionary<AggregationLevel, string?> aggrigationLevelValues)

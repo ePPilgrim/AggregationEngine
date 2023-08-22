@@ -12,7 +12,6 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                                                                                                                                 where TUnorderedKey : IKey
                                                                                                                                 where TVector : IMetaData
 {
-    private readonly IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory;
     private readonly IDataLayerFactory<TResult> resultDataLayerFactory;
     private readonly IAsyncMapInternal<TUnorderedKey, TVector> leaves;
     private readonly IAggregationStructure aggregationStructure;
@@ -23,7 +22,6 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                                                         IAsyncMapInternal<TUnorderedKey, TVector> leaves,
                                                         IAggregationStructure aggregationStructure)
     {
-        this.keyFactory = keyFactory;
         this.resultDataLayerFactory = resultDataLayerFactory;
         this.leaves = leaves;
         this.aggregationStructure = aggregationStructure;

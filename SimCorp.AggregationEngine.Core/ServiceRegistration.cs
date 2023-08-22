@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.ExternalAllocator;
 using SimCorp.AggregationEngine.Core.Internal;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer.DefaultImplementation;
@@ -12,16 +13,18 @@ namespace SimCorp.AggregationEngine.Core;
 
 public static class ServiceRegistration
 { 
-    public static IServiceCollection AddInternalServices<TOrderedKey, TUnorderedKey, TVector, TResult>(this IServiceCollection services) where TOrderedKey : IOrderedKey<TOrderedKey>
-                                                                                                                                         where TUnorderedKey : IKey
-                                                                                                                                         where TVector : IAggregationPosition
+    public static IServiceCollection AddAggregationService<TVector, TResult>(this IServiceCollection services) where TVector : IAggregationPosition
     {
-        services.AddTransient<IPositionDataLayerFactory<TVector>, DefaultPositionDataLayerFactory<TVector>>();  
-        services.AddTransient<IDataLayerFactory<TResult>, DefaultDataLayerFactory<TResult>>();
+        services.AddSingleton<IKeyPropertySelector, DefaultKeyPropertySelector>();
+        services.AddSingleton<IKeyToStringHelper, DefaultKeyToStringHelper>();
+        services.AddSingleton<IAsyncExternalDataAllocator<TVector>, DummyAsyncExternalDataAllocator<TVector>>();
+        services.AddSingleton<IAsyncExternalDataAllocator<TResult>, DummyAsyncExternalDataAllocator<TResult>>();
         services.AddTransient<IKeyFactory<DefaultOrderedKey, DefaultUnorderedKey>, DefaultKeyFactory>();
+        services.AddTransient<IPositionDataLayerFactory<TVector>, DefaultPositionDataLayerFactory<TVector>>();
+        services.AddTransient<IDataLayerFactory<TResult>, DefaultDataLayerFactory<TResult>>();
         services.AddTransient<IOptimizationPolicyInternal, DefaultOptimizationPolicyInternal>();
-        services.AddTransient<IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult>, DefaultAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult>>();
+        services.AddTransient<IAggregationCalculationFactoryInternal<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>, DefaultAggregationCalculationFactoryInternal<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>>();
+        services.AddTransient<IAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>>(x => new DefaultAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>(x));
         return services;
     }
-
 }

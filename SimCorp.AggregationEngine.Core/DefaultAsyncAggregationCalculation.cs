@@ -8,7 +8,7 @@ using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
 namespace SimCorp.AggregationEngine.Core;
 
-public class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVector, TResult> : IAsyncAggrecationCalculation<TOrderedKey, TUnorderedKey, TVector, TResult>
+internal class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVector, TResult> : IAsyncAggrecationCalculation<TOrderedKey, TUnorderedKey, TVector, TResult>
                                                                                                     where TOrderedKey : IOrderedKey<TOrderedKey>
                                                                                                     where TUnorderedKey : IKey
                                                                                                     where TVector : IAggregationPosition
@@ -26,14 +26,13 @@ public class DefaultAsyncAggregationCalculation<TOrderedKey, TUnorderedKey, TVec
     private IAsyncAggrecationCalculationInternal<TOrderedKey, TUnorderedKey, IVectorAllocatorWrapperInternal<TVector>, TResult> aggregationCalculationInternal;
 
 
-    public DefaultAsyncAggregationCalculation(  IServiceProvider internalServicesProvider,
+    public DefaultAsyncAggregationCalculation(  IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult> internalsFactory,
                                                 IKeyFactory<TOrderedKey, TUnorderedKey> keyFactory,
                                                 Func<TVector, IParameters, CancellationToken, Task<TResult>> calculator,
                                                 Func<IEnumerable<TVector>, CancellationToken, Task<TVector>> accumulator)
     {
-        internalsFactory = internalServicesProvider.GetRequiredService<IAggregationCalculationFactoryInternal<TOrderedKey, TUnorderedKey, TVector, TResult>>();
-        if(internalsFactory == null) throw new ArgumentNullException(nameof(internalsFactory));
-        this.keyFactory = keyFactory ?? throw new ArgumentNullException(nameof(keyFactory));
+        this.internalsFactory = internalsFactory;
+        this.keyFactory = keyFactory;
         this.calculator = calculator ?? throw new ArgumentNullException(nameof(calculator));
         this.accumulator = accumulator ?? throw new ArgumentNullException(nameof(accumulator));
 

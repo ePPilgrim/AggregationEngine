@@ -1,6 +1,6 @@
 ﻿namespace SimCorp.AggregationEngine.Core.Internal;
 
-internal interface IOptimizationPolicyInternal
+public interface IOptimizationPolicyInternal
 {
     int VectorChankSize { get; set; }
 }

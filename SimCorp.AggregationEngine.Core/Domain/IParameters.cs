@@ -1,7 +1,5 @@
-﻿using System.Collections;
+﻿namespace SimCorp.AggregationEngine.Core.Domain;
 
-namespace SimCorp.AggregationEngine.Core.Domain;
-
-public interface IParameters : IEqualityComparer<IParameters>
+public interface IParameters : IEquatable<IParameters>
 {
 }

@@ -1,5 +1,5 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
-using SimCorp.AggregationEngine.Core.Key;
+using SimCorp.AggregationEngine.Core.Key.Common;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
 namespace SimCorp.AggregationEngine.Core;

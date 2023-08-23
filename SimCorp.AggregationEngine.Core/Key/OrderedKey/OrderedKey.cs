@@ -1,14 +1,15 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.Common;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 namespace SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
-public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
+public class OrderedKey : AbstractKey, IOrderedKey<OrderedKey>
 {
-    private readonly IOrderedKeyBuilder<DefaultOrderedKey> keyBuilder;
+    private readonly IOrderedKeyBuilder<OrderedKey> keyBuilder;
     private readonly IKeyToStringHelper keyToStringHelper;
 
-    public DefaultOrderedKey(IOrderedKeyBuilder<DefaultOrderedKey> keyBuilder,
+    public OrderedKey(IOrderedKeyBuilder<OrderedKey> keyBuilder,
                              IKeyToStringHelper keyToStringHelper,
                              IAggregationStructure aggregationStructure,
                              IReadOnlyDictionary<AggregationLevel, string?> aggrigationLevelValues)
@@ -23,23 +24,13 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
     public IAggregationStructure AggregationStructure { get; }
     public string[] StructureValues { get; }
 
-    public override bool Equals(object? other)
-    {
-        return Equals(other as IKey);
-    }
-
-    public bool Equals(IKey? other)
+    public override bool Equals(IKey? other)
     {
         if (other == null) return false;
         return ToUniqueString() == other.ToUniqueString();
     }
 
-    public override int GetHashCode()
-    {
-        return ToUniqueString().GetHashCode();
-    }
-
-    public DefaultOrderedKey GetSubKey(IAggregationStructure subAggregationStructure)
+    public OrderedKey GetSubKey(IAggregationStructure subAggregationStructure)
     {
         return keyBuilder.BuildSubKey(this, subAggregationStructure);
     }
@@ -49,7 +40,7 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
         return AggregationStructure.IsEmpty();
     }
 
-    public bool IsPrefixOf(DefaultOrderedKey otherKey)
+    public bool IsPrefixOf(OrderedKey otherKey)
     {
         if(StructureValues.Length > otherKey.StructureValues.Length) return false;  
         for(int i = StructureValues.Length - 1; i >= 0; i--)
@@ -60,14 +51,9 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
         return true;
     }
 
-    public string ToUniqueString()
+    public override string ToUniqueString()
     {
         return keyToStringHelper.OrderKeyToStringKey(AggregationStructure.Select(x => x.ToString()).ToArray(), StructureValues);
-    }
-
-    public override string ToString()
-    {
-        return ToUniqueString();
     }
 
     private void argumentValidation(IReadOnlyDictionary<AggregationLevel, string?> aggrigationLevelValues)

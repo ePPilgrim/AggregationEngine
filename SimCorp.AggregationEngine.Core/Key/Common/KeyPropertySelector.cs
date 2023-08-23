@@ -3,9 +3,9 @@ using System.Reflection.Emit;
 using System.Reflection;
 using SimCorp.AggregationEngine.Core.Key.KeyAttributes;
 
-namespace SimCorp.AggregationEngine.Core.Key;
+namespace SimCorp.AggregationEngine.Core.Key.Common;
 
-public class DefaultKeyPropertySelector : IKeyPropertySelector
+public class KeyPropertySelector : IKeyPropertySelector
 {
     private readonly IDictionary<Type, object> typeSolver = new Dictionary<Type, object>();
 
@@ -40,7 +40,7 @@ public class DefaultKeyPropertySelector : IKeyPropertySelector
         return res;
     }
 
-    private class GenericTypeSelectorSolver<T> 
+    private class GenericTypeSelectorSolver<T>
     {
         public delegate KeyValuePair<string, string?> GetPropertyInfo(T value);
 
@@ -55,7 +55,7 @@ public class DefaultKeyPropertySelector : IKeyPropertySelector
             initializeSelectorsForKeyPropertyAttribute();
         }
 
-        private void initializeSelectorsForKeyPropertyAttribute() 
+        private void initializeSelectorsForKeyPropertyAttribute()
         {
             var parametersInterfaceType = typeof(IParameters);
             if (typeof(T).GetInterfaces().Any(x => x == parametersInterfaceType) == false) return;

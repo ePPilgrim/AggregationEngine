@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Text;
 
-namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+namespace SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
-public class DefaultAggregationStructure : IAggregationStructure
+public class AggregationStructure : IAggregationStructure
 {
     private readonly IAggregationStructureBuilder builder;
     private readonly List<AggregationLevel> structure;
 
-    public DefaultAggregationStructure(IEnumerable<AggregationLevel> structuredUniqueAggregationLevels, IAggregationStructureBuilder builder) 
+    public AggregationStructure(IEnumerable<AggregationLevel> structuredUniqueAggregationLevels, IAggregationStructureBuilder builder)
     {
         this.builder = builder;
         structure = structuredUniqueAggregationLevels.ToList();
@@ -28,7 +28,7 @@ public class DefaultAggregationStructure : IAggregationStructure
 
     public IEnumerator<AggregationLevel> GetEnumerator()
     {
-        foreach(var item in structure)
+        foreach (var item in structure)
         {
             yield return item;
         }
@@ -53,7 +53,7 @@ public class DefaultAggregationStructure : IAggregationStructure
     {
         var strBuilding = new StringBuilder();
         strBuilding.Append("( ");
-        foreach(var item in structure)
+        foreach (var item in structure)
         {
             strBuilding.Append($" {item},");
         }
@@ -63,11 +63,11 @@ public class DefaultAggregationStructure : IAggregationStructure
 
     public bool IsPrefixOf(IAggregationStructure aggregateStructure)
     {
-        var castedAggregationStructure = aggregateStructure as DefaultAggregationStructure;
+        var castedAggregationStructure = aggregateStructure as AggregationStructure;
         if (ReferenceEquals(null, castedAggregationStructure)) return false;
         if (structure.Count > aggregateStructure.Count()) return false;
         if (IsEmpty()) return true;
-        for(int i = structure.Count - 1; i >= 0; --i)
+        for (int i = structure.Count - 1; i >= 0; --i)
         {
             if (aggregateStructure[i] != structure[i]) return false;
         }

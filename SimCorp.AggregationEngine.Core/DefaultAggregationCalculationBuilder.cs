@@ -8,6 +8,7 @@ using SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
+using SimCorp.AggregationEngine.Core.Key.Common;
 
 namespace SimCorp.AggregationEngine.Core;
 

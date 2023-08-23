@@ -2,7 +2,8 @@
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.Common;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
 internal class DefaultAggregationCalculationBuilderInternal<TOrderedKey, TUnorderedKey, TVector, TResult> : IAggregationCalculationBuilderInternal<TOrderedKey, TUnorderedKey, TVector, TResult> where TOrderedKey : IOrderedKey<TOrderedKey>

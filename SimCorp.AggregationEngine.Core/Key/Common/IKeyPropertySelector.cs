@@ -1,6 +1,6 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 
-namespace SimCorp.AggregationEngine.Core.Key;
+namespace SimCorp.AggregationEngine.Core.Key.Common;
 
 public interface IKeyPropertySelector
 {

@@ -7,36 +7,34 @@ namespace AggregationEngine.MonteCarlo;
 
 public class MonteCarloAnalytics : IAnalytics<AggregationPosition, double>
 {
-    private readonly IAsyncAggrecationCalculation<DefaultOrderedKey, DefaultUnorderedKey, AggregationPosition, double> aggregationCalculation;
+    private readonly IAsyncAggrecationCalculation<OrderedKey, UnorderedKey, AggregationPosition, double> aggregationCalculation;
 
-    
-
-    public MonteCarloAnalytics(IAggregationCalculationBuilder<DefaultOrderedKey, DefaultUnorderedKey, AggregationPosition, double> calculationBuilder)
+    public MonteCarloAnalytics(IAggregationCalculationBuilder<OrderedKey, UnorderedKey, AggregationPosition, double> calculationBuilder)
     {
         aggregationCalculation = calculationBuilder.Build(calculator, accumulator);
     }
-    public async Task<AggregationPosition> AccumulateForSingleNodeAsync(DefaultOrderedKey nodeKey, CancellationToken token)
+    public async Task<AggregationPosition> AccumulateForSingleNodeAsync(OrderedKey nodeKey, CancellationToken token)
     {
         //return await aggregationCalculation.AccumulateForSingleNodeAsync(nodeKey, token);
         return aggregationCalculation.AccumulateForSingleNodeAsync(nodeKey, token).Result;
     }
 
-    public async Task<IDictionary<DefaultUnorderedKey, double>> CalculateSingleNodeAsync(DefaultOrderedKey nodeKey, IDictionary<DefaultUnorderedKey, IParameters> parameters, CancellationToken token)
+    public async Task<IDictionary<UnorderedKey, double>> CalculateSingleNodeAsync(OrderedKey nodeKey, IDictionary<UnorderedKey, IParameters> parameters, CancellationToken token)
     {
         return await aggregationCalculation.CalculateSingleNodeAsync(nodeKey, parameters, token);
     }
 
-    public async Task<IDictionary<KeyValuePair<DefaultOrderedKey, DefaultUnorderedKey>, double>> CalculateSubTreeAsync(DefaultOrderedKey rootNodeKey, IDictionary<DefaultUnorderedKey, IParameters> parameters, CancellationToken token)
+    public async Task<IDictionary<KeyValuePair<OrderedKey, UnorderedKey>, double>> CalculateSubTreeAsync(OrderedKey rootNodeKey, IDictionary<UnorderedKey, IParameters> parameters, CancellationToken token)
     {
         return await aggregationCalculation.CalculateSubTreeAsync(rootNodeKey, parameters, token);
     }
 
-    public IDictionary<DefaultUnorderedKey, IMetaData> GetAllLeaves()
+    public IDictionary<UnorderedKey, IMetaData> GetAllLeaves()
     {
         return aggregationCalculation.GetAllLeaves();
     }
 
-    public async Task RemoveAsync(IEnumerable<DefaultUnorderedKey> keys, CancellationToken token)
+    public async Task RemoveAsync(IEnumerable<UnorderedKey> keys, CancellationToken token)
     {
         await aggregationCalculation.RemoveAsync(keys, token);
     }

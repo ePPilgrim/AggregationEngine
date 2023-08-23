@@ -1,8 +1,10 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer;
 using SimCorp.AggregationEngine.Core.Key;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.Common;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 using System.Collections.Concurrent;
 
 namespace SimCorp.AggregationEngine.Core.Internal.DefaultImplementation;
@@ -79,6 +81,7 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                 tempLevelNodeVectors.Add(KeyValuePair.Create(grp.Key, accumulatedVector));
             }
 
+
             foreach (var node in tempLevelNodeVectors)
             {
                 ConcurrentDictionary<DualKey<TOrderedKey, TUnorderedKey>, Task<TResult>> resultAsync = new();
@@ -88,8 +91,8 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                     resultAsync.TryAdd(key, calculator(node.Value, item.Value, token));
                     //resultAsync[key] = calculator(node.Value, item.Value, token);
                 }
-                Task.WhenAll(resultAsync.Values).Wait();
-                //await Task.WhenAll(resultAsync.Values);
+                //Task.WhenAll(resultAsync.Values).Wait();
+                await Task.WhenAll(resultAsync.Values);
                 await res.UpdateOrAddAsync(resultAsync.Select(x => KeyValuePair.Create(x.Key, x.Value.Result)), token);
             }
 

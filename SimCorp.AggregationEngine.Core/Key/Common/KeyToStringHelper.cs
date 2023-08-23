@@ -1,6 +1,6 @@
-﻿namespace SimCorp.AggregationEngine.Core.Key;
+﻿namespace SimCorp.AggregationEngine.Core.Key.Common;
 
-public class DefaultKeyToStringHelper : IKeyToStringHelper
+public class KeyToStringHelper : IKeyToStringHelper
 {
     private const string OrderedKeyPrefix = "Ordered";
     private const string UnorderedKeyPrefix = "Unordered";

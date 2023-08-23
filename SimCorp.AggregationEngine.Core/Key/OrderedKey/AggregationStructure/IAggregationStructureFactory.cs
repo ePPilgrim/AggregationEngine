@@ -1,4 +1,4 @@
-﻿namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+﻿namespace SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 public interface IAggregationStructureFactory
 {

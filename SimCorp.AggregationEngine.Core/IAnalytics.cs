@@ -4,6 +4,6 @@ using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 
 namespace SimCorp.AggregationEngine.Core;
 
-public interface IAnalytics<TVector, TResult> : IAsyncAggrecationCalculation<DefaultOrderedKey, DefaultUnorderedKey, TVector, TResult>  where TVector : IAggregationPosition
+public interface IAnalytics<TVector, TResult> : IAsyncAggrecationCalculation<OrderedKey, UnorderedKey, TVector, TResult>  where TVector : IAggregationPosition
 {
 }

@@ -1,6 +1,6 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 
-namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+namespace SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 public interface IAggregationStructureBuilder
 {

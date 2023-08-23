@@ -1,4 +1,5 @@
-﻿using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+﻿using SimCorp.AggregationEngine.Core.Key.Common;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 namespace SimCorp.AggregationEngine.Core.Key.OrderedKey;
 

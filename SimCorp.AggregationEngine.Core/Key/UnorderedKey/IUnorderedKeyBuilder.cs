@@ -1,4 +1,5 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Key.Common;
 
 namespace SimCorp.AggregationEngine.Core.Key.UnorderedKey;
 

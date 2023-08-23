@@ -1,15 +1,16 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.Common;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 namespace SimCorp.AggregationEngine.Core.Key.OrderedKey;
 
-public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
+public class OrderedKeyBuilder : IOrderedKeyBuilder<OrderedKey>
 {
     private readonly IKeyPropertySelector keyPropertySelector;
     private readonly IKeyToStringHelper keyToStringHelper;
     private readonly IAggregationStructureBuilder aggregationStructureBuilder;
     private readonly IAggregationStructure aggregationStructure;
-    public DefaultOrderedKeyBuilder(IKeyPropertySelector keyPropertySelector,
+    public OrderedKeyBuilder(IKeyPropertySelector keyPropertySelector,
                                     IKeyToStringHelper keyToStringHelper,
                                     IAggregationStructureBuilder aggregationStructureBuilder,
                                     IAggregationStructure aggregationStructure)
@@ -20,7 +21,7 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
         this.aggregationStructureBuilder = aggregationStructureBuilder ?? throw new ArgumentNullException(nameof(aggregationStructureBuilder));
     }
 
-    public DefaultOrderedKey Build<T>(T metaData) where T : IMetaData
+    public OrderedKey Build<T>(T metaData) where T : IMetaData
     {
         var dict = new Dictionary<AggregationLevel, string?>();
         foreach (var aggregationLevel in aggregationStructure)
@@ -32,15 +33,15 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
             }
             dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(metaData, aggregationLevel).Value);
         }
-        return new DefaultOrderedKey(this, keyToStringHelper, aggregationStructure, dict);
+        return new OrderedKey(this, keyToStringHelper, aggregationStructure, dict);
     }
 
-    public DefaultOrderedKey BuildEmptyKey()
+    public OrderedKey BuildEmptyKey()
     {
-        return new DefaultOrderedKey(this, keyToStringHelper, aggregationStructureBuilder.BuildEmptyAggregationStructure(), new Dictionary<AggregationLevel, string?>());
+        return new OrderedKey(this, keyToStringHelper, aggregationStructureBuilder.BuildEmptyAggregationStructure(), new Dictionary<AggregationLevel, string?>());
     }
 
-    public DefaultOrderedKey BuildSubKey(DefaultOrderedKey key, IAggregationStructure subAggregationStructure)
+    public OrderedKey BuildSubKey(OrderedKey key, IAggregationStructure subAggregationStructure)
     {
         if (!subAggregationStructure.IsPrefixOf(aggregationStructure))
         {
@@ -52,6 +53,6 @@ public class DefaultOrderedKeyBuilder : IOrderedKeyBuilder<DefaultOrderedKey>
         {
             dict.Add(aggregationLevel, key.StructureValues[index++]);
         }
-        return new DefaultOrderedKey(this, keyToStringHelper, subAggregationStructure, dict);
+        return new OrderedKey(this, keyToStringHelper, subAggregationStructure, dict);
     }
 }

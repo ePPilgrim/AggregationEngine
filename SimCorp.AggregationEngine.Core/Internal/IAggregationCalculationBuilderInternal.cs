@@ -1,8 +1,8 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Internal.DataLayer;
-using SimCorp.AggregationEngine.Core.Key;
-using SimCorp.AggregationEngine.Core.Key.AggregationStructure;
+using SimCorp.AggregationEngine.Core.Key.Common;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
+using SimCorp.AggregationEngine.Core.Key.OrderedKey.AggregationStructure;
 
 namespace SimCorp.AggregationEngine.Core.Internal;
 

@@ -6,11 +6,6 @@ using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Key;
 using SimCorp.AggregationEngine.Core.Key.OrderedKey;
 using SimCorp.AggregationEngine.Core.Key.UnorderedKey;
-using StackExchange.Redis;
-using System.Globalization;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Xml.Linq;
 
 namespace AggregationEngine;
 
@@ -41,14 +36,16 @@ internal class AggregationApplication : IHostedService
     private async void OnStarted()
     {
         var analytics = serviceProvider.GetRequiredService<IAnalytics<AggregationPosition, double>>();
+
+        var keyFactory = serviceProvider.GetRequiredService<IKeyFactory<OrderedKey, UnorderedKey>>();
         var aggrStructure = new List<AggregationLevel> {    AggregationLevel.Top, AggregationLevel.Portfolio, 
                                                             AggregationLevel.Currency, AggregationLevel.Holding,
                                                             AggregationLevel.Security, AggregationLevel.Position};
-        var positions = GeneratePositions.GetPositionsRandom();
-
-        var keyFactory = serviceProvider.GetRequiredService<IKeyFactory<DefaultOrderedKey, DefaultUnorderedKey>>();
         var aggrStructureBuilder = keyFactory.CreateAggregationStructureBuilder();
         var aggregationStructure = aggrStructureBuilder.BuildFromSequence(aggrStructure);
+
+        var positions = GeneratePositions.GetPositionsRandom();
+
         var keybuilder_unordered = keyFactory.CreateUnorderedKeyBuilder();
         var keybuilder_ordered = keyFactory.CreateOrderedKeyBuilder(aggregationStructure);
 
@@ -66,7 +63,7 @@ internal class AggregationApplication : IHostedService
         analytics.SetAggregationStructure(aggrStructure);
         var param1 = new MonteCarloParameters() { ConfidenceLevel = 0.99 };
         var param2 = new MonteCarloParameters() { ConfidenceLevel = 0.01 };
-        var paramDictionary = new Dictionary<DefaultUnorderedKey, IParameters>()
+        var paramDictionary = new Dictionary<UnorderedKey, IParameters>()
         {
             {keybuilder_unordered.BuildForParameters(param1), param1 },
             {keybuilder_unordered.BuildForParameters(param2), param2 },
@@ -94,8 +91,21 @@ internal class AggregationApplication : IHostedService
         }
 
         var calcSubTree = analytics.CalculateSubTreeAsync(subOKey, paramDictionary, CancellationToken.None).Result;
+        var allKeys = new List<string>();
+        foreach (var level in aggregationStructure.Reverse())
+        {
+            var subStructure = aggregationStructure.GetSubStructureAt(level);
+            var keybuilder = keyFactory.CreateOrderedKeyBuilder(subStructure);
+            foreach (var leaf in analytics.GetAllLeaves())
+            {
+                var key = keybuilder_ordered.Build(leaf.Value);
+                var subkey = key.GetSubKey(subStructure);
+                allKeys.Add(subkey.ToUniqueString());
 
-      
+            }
+        }
+
+        int ss = allKeys.Distinct().Count();
 
 
         Console.WriteLine("Done!");

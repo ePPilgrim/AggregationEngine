@@ -1,4 +1,4 @@
-﻿namespace SimCorp.AggregationEngine.Core.Key;
+﻿namespace SimCorp.AggregationEngine.Core.Key.Common;
 
 public interface IKeyToStringHelper
 {

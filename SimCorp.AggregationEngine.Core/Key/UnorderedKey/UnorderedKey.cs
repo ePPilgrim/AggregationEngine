@@ -1,34 +1,26 @@
-﻿namespace SimCorp.AggregationEngine.Core.Key.UnorderedKey;
+﻿using SimCorp.AggregationEngine.Core.Key.Common;
 
-public class DefaultUnorderedKey : IKey
+namespace SimCorp.AggregationEngine.Core.Key.UnorderedKey;
+
+public class UnorderedKey : AbstractKey
 {
     private readonly IKeyToStringHelper keyToStringHelper;
     private readonly string key;
 
-    public DefaultUnorderedKey(IKeyToStringHelper keyToStringHelper, IReadOnlyDictionary<string, string?> keyValuePairs)
+    public UnorderedKey(IKeyToStringHelper keyToStringHelper, IReadOnlyDictionary<string, string?> keyValuePairs)
     {
         this.keyToStringHelper = keyToStringHelper;
         if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
         key = buildKey(keyValuePairs);
     }
 
-    public bool Equals(IKey? other)
+    public override bool Equals(IKey? other)
     {
         if (other == null) return false;
         return other.ToUniqueString() == ToUniqueString();
     }
 
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as IKey);
-    }
-
-    public string ToUniqueString()
-    {
-        return key;
-    }
-
-    public override string ToString()
+    public override string ToUniqueString()
     {
         return key;
     }

@@ -1,5 +1,5 @@
 ﻿using SimCorp.AggregationEngine.Core.ExternalAllocator;
-using SimCorp.AggregationEngine.Core.Key;
+using SimCorp.AggregationEngine.Core.Key.Common;
 using System.Collections;
 using System.Collections.Concurrent;
 

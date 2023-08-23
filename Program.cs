@@ -9,14 +9,6 @@ using SimCorp.AggregationEngine.Core.Domain;
 using SimCorp.AggregationEngine.Core.Key;
 
 
-var st = new Stack<int>(new[] {1,2,3,4});
-
-foreach(var t in st)
-{
-    Console.WriteLine(t);
-}
-
-
 var hostBuilder = Host.CreateDefaultBuilder(args);
 
 

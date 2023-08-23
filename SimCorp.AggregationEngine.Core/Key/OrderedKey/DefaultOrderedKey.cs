@@ -23,13 +23,15 @@ public class DefaultOrderedKey : IOrderedKey<DefaultOrderedKey>
     public IAggregationStructure AggregationStructure { get; }
     public string[] StructureValues { get; }
 
+    public override bool Equals(object? other)
+    {
+        return Equals(other as IKey);
+    }
+
     public bool Equals(IKey? other)
     {
-        var otherKey = other as DefaultOrderedKey;
-        if (otherKey == null) return false;
-        if (otherKey.AggregationStructure != AggregationStructure) return false;
-        if (StructureValues.SequenceEqual(otherKey.StructureValues)) return true;
-        return false;
+        if (other == null) return false;
+        return ToUniqueString() == other.ToUniqueString();
     }
 
     public override int GetHashCode()

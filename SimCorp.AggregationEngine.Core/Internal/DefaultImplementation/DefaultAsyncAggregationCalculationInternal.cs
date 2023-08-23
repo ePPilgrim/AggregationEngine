@@ -66,17 +66,16 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
         var res = resultDataLayerFactory.Create<DualKey<TOrderedKey, TUnorderedKey>>();
         using var tempLeaves = (IAsyncMapInternal<TUnorderedKey,TVector>)leaves.Clone();
 
-        var levelNodeVectors = tempLeaves.GetAllValues().Select(x => KeyValuePair.Create(orderedKeyBuilder.Build(x),x)).Where(x => rootNodeKey.IsPrefixOf(x.Key)).ToList();
+        var levelNodeVectors = tempLeaves.GetAllValues().Select(x => KeyValuePair.Create(orderedKeyBuilder.Build(x),x)).Where(x => rootNodeKey.IsPrefixOf(x.Key));
 
         foreach (var level in aggregationStructure.Reverse()) // from leaves to top nodes 
         {
             var subStructure = aggregationStructure.GetSubStructureAt(level);
-            List<KeyValuePair<TOrderedKey, TVector>> tempLevelNodeVectors = new();
-            var ttt = levelNodeVectors.GroupBy(x => x.Key.GetSubKey(subStructure).ToUniqueString()).ToDictionary(x => x.Key, x => x);
+            var tempLevelNodeVectors = new ConcurrentBag<KeyValuePair<TOrderedKey, TVector>>();
             foreach (var grp in levelNodeVectors.GroupBy(x => x.Key.GetSubKey(subStructure)))
             {
-                //var accumulatedVector = await accumulator(grp.Select(x => x.Value), grp.Key , token);
-                var accumulatedVector = accumulator(grp.Select(x => x.Value), grp.Key, token).Result;
+                var accumulatedVector = await accumulator(grp.Select(x => x.Value), grp.Key , token);
+                //var accumulatedVector = accumulator(grp.Select(x => x.Value), grp.Key, token).Result;
                 tempLevelNodeVectors.Add(KeyValuePair.Create(grp.Key, accumulatedVector));
             }
 
@@ -91,7 +90,7 @@ internal class DefaultAsyncAggregationCalculationInternal<TOrderedKey, TUnordere
                 }
                 Task.WhenAll(resultAsync.Values).Wait();
                 //await Task.WhenAll(resultAsync.Values);
-                res.UpdateOrAddAsync(resultAsync.Select(x => KeyValuePair.Create(x.Key, x.Value.Result)), token).Wait();
+                await res.UpdateOrAddAsync(resultAsync.Select(x => KeyValuePair.Create(x.Key, x.Value.Result)), token);
             }
 
             if (rootNodeKey.GetSubKey(subStructure).IsEmpty()) continue;

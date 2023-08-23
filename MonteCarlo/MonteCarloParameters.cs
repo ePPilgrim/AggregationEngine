@@ -5,11 +5,25 @@ namespace AggregationEngine.MonteCarlo;
 
 public class MonteCarloParameters : IParameters
 {
+    public bool Equals(MonteCarloParameters? other)
+    {
+        if (other == null) return false;
+        return other.ConfidenceLevel == ConfidenceLevel;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as MonteCarloParameters);
+    }
+
+    public override string ToString()
+    {
+        return ConfidenceLevel.ToString();
+    }
+
     public bool Equals(IParameters? other)
     {
-        var otherMCParameters = other as MonteCarloParameters;
-        if (ReferenceEquals(null, otherMCParameters)) return false;
-        return otherMCParameters.ConfidenceLevel == this.ConfidenceLevel;
+        return Equals(other as MonteCarloParameters);
     }
 
     [KeyProperty]

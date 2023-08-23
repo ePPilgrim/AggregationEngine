@@ -1,6 +1,6 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
-using System;
 using System.Collections;
+using System.Text;
 
 namespace SimCorp.AggregationEngine.Core.Key.AggregationStructure;
 
@@ -17,8 +17,13 @@ public class DefaultAggregationStructure : IAggregationStructure
 
     public bool Equals(IAggregationStructure? other)
     {
-        if (!ReferenceEquals(this, other)) return false;
+        if (ReferenceEquals(null, other)) return false;
         return this.SequenceEqual(other);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as IAggregationStructure);
     }
 
     public IEnumerator<AggregationLevel> GetEnumerator()
@@ -42,6 +47,18 @@ public class DefaultAggregationStructure : IAggregationStructure
     public bool IsEmpty()
     {
         return structure.Count == 0;
+    }
+
+    public override string ToString()
+    {
+        var strBuilding = new StringBuilder();
+        strBuilding.Append("( ");
+        foreach(var item in structure)
+        {
+            strBuilding.Append($" {item},");
+        }
+        strBuilding.Append(" )");
+        return strBuilding.ToString();
     }
 
     public bool IsPrefixOf(IAggregationStructure aggregateStructure)

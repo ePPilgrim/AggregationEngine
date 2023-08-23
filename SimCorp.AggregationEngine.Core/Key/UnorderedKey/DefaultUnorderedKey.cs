@@ -14,9 +14,13 @@ public class DefaultUnorderedKey : IKey
 
     public bool Equals(IKey? other)
     {
-        var otherKey = other as DefaultUnorderedKey;
-        if (otherKey == null) return false;
-        return otherKey.ToUniqueString() == ToUniqueString();
+        if (other == null) return false;
+        return other.ToUniqueString() == ToUniqueString();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as IKey);
     }
 
     public string ToUniqueString()

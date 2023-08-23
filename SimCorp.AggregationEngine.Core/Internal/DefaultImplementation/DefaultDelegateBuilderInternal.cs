@@ -49,7 +49,6 @@ internal class DefaultDelegateBuilderInternal<TKey, TVector, TResult> : IDelegat
 
     private async Task<IVectorAllocatorWrapperInternal<TVector>> accumulator(IEnumerable<IVectorAllocatorWrapperInternal<TVector>> vectors, TKey key, CancellationToken token)
     {
-        Console.WriteLine(vectors.Count());
         List<TVector> subVectors = new();
         int i = 0;
         int n = optimizationPolicy.VectorChankSize;

@@ -1,12 +1,13 @@
 ﻿using SimCorp.AggregationEngine.Core.Domain;
+using SimCorp.AggregationEngine.Core.Key.KeyAttributes;
 
 namespace AggregationEngine.MonteCarlo;
 
-public class AggregationPosition : IAggregationPosition
+public class AggregationPosition : IAggregationPosition, IDummyMetaData
 {
     public AggregationPosition()
     {}
-    public AggregationPosition(IMetaData metaData, double nominal, double[] scenarious)
+    public AggregationPosition(IDummyMetaData metaData, double nominal, double[] scenarious)
     {
         PositionIK = metaData.PositionIK;
         SecurityIK = metaData.SecurityIK;
@@ -47,7 +48,8 @@ public class AggregationPosition : IAggregationPosition
     public string? FreeCode1 { get; set ; }
     public string? FreeCode2 { get; set ; }
     public string? FreeCode3 { get; set; }
-
+    public int? InstrumentType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int FreeCode4 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public void DoAdditionOperation(IAggregationPosition aggregationPosition)
     {
@@ -70,3 +72,5 @@ public class AggregationPosition : IAggregationPosition
         FreeCode2 = (aggrpos.FreeCode2 == FreeCode2) ? aggrpos.FreeCode2 : null;
     }
 }
+
+

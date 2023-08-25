@@ -6,6 +6,7 @@ public enum AggregationLevel
     Position,
     Security,
     Holding,
+    InstrumentType,
     Currency,
     Portfolio,
     Top,

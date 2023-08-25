@@ -3,7 +3,7 @@ using SimCorp.AggregationEngine.Core.Key.KeyAttributes;
 
 namespace AggregationEngine.MonteCarlo;
 
-public class MetaData : IMetaData
+public class MetaData : IDummyMetaData
 {
     public MetaData()
     {
@@ -16,9 +16,11 @@ public class MetaData : IMetaData
         HoldingIK = otherMetadata.HoldingIK;
         Currency = otherMetadata.Currency;
         Portfolio  = otherMetadata.Portfolio;
+        InstrumentType = otherMetadata.InstrumentType;
         FreeCode1 = otherMetadata.FreeCode1;
         FreeCode2 = otherMetadata.FreeCode2;
         FreeCode3 = otherMetadata.FreeCode3;
+        FreeCode4 = otherMetadata.FreeCode4;    
     }
     public int? PositionIK { get; set; }
     public int? SecurityIK { get; set; }
@@ -28,4 +30,6 @@ public class MetaData : IMetaData
     public string? FreeCode1 { get; set; }
     public string? FreeCode2 { get; set; }
     public string? FreeCode3 { get; set; }
+    public int? InstrumentType { get ; set; }
+    public int FreeCode4 { get; set; }
 }

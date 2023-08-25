@@ -26,7 +26,11 @@ public class UnorderedKeyBuilder : IUnorderedKeyBuilder<UnorderedKey>
             if (aggregationLevel != AggregationLevel.None && aggregationLevel != AggregationLevel.Top)
             {
                 var item = keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(vector, aggregationLevel);
-                dict.Add(item.Key, item.Value);
+               if(item != null)
+                {
+                    dict.Add(item.Value.Key, item.Value.Value);
+                }
+                
             }
         }
         return new UnorderedKey(keyToStringHelper, dict);

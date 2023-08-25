@@ -8,6 +8,7 @@ public static class GeneratePositions
     private static int[] securityDomain = Enumerable.Range(1, NumberOfLeaves / 2).ToArray();
     private static string[] portfolioDomain = {"Portfolio1", "Portfolio2", "Portfolio3"};
     private static string[] currencyDomain = { "UAH", "USD", "EUR", "CZ", "DEN" };
+    private static int[] instrumentTypeDomain = { 1, 2, 3 };
 
     public static List<AggregationPosition> GetPositionsRandom()
     {
@@ -22,6 +23,7 @@ public static class GeneratePositions
                 HoldingIK = holdingDomain[random.Next(0, holdingDomain.Length)],
                 Currency = currencyDomain[random.Next(0, currencyDomain.Length)],
                 Portfolio = portfolioDomain[random.Next(0, portfolioDomain.Length)],
+                InstrumentType = instrumentTypeDomain[random.Next(0,3)],
                 FreeCode1 = $"FreeCode1_{item}",
                 FreeCode2 = $"FreeCode2_{item}",
                 FreeCode3 = $"FreeCode3_{item}"

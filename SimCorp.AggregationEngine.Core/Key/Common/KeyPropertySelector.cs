@@ -9,7 +9,7 @@ public class KeyPropertySelector : IKeyPropertySelector
 {
     private readonly IDictionary<Type, object> typeSolver = new Dictionary<Type, object>();
 
-    public KeyValuePair<string, string?> GetPropertyWithAggregationLevel<T>(T value, AggregationLevel aggregationLevel) where T : IMetaData
+    public KeyValuePair<string, string?>? GetPropertyWithAggregationLevel<T>(T value, AggregationLevel aggregationLevel) where T : IMetaData
     {
         var selector = getTypeSolver<T>().aggregationLevelAttributeSelector;
         if (selector.ContainsKey(aggregationLevel))
@@ -57,9 +57,12 @@ public class KeyPropertySelector : IKeyPropertySelector
 
         private void initializeSelectorsForKeyPropertyAttribute()
         {
-            var parametersInterfaceType = typeof(IParameters);
-            if (typeof(T).GetInterfaces().Any(x => x == parametersInterfaceType) == false) return;
-            var properties = typeof(T).GetProperties().Where(x => x.GetMethod != null).Where(x => x.GetCustomAttribute<KeyPropertyAttribute>() != null);
+            var interfaceTypes = typeof(T).GetInterfaces().ToList();
+            if (typeof(T).IsInterface) { interfaceTypes.Add(typeof(T)); }
+
+            var properties = interfaceTypes.SelectMany(x => x.GetProperties())
+                                           .Where(x => x.GetMethod != null)
+                                           .Where(x => x.GetCustomAttribute<KeyPropertyAttribute>() != null);
 
             foreach (PropertyInfo property in properties)
             {
@@ -70,30 +73,18 @@ public class KeyPropertySelector : IKeyPropertySelector
 
         private void initializeSelectorsForAggregationLevelAttribute()
         {
-            //var metaDataInterfaceType = typeof(IMetaData);
+            var interfaceTypes = typeof(T).GetInterfaces().ToList();
+            if(typeof(T).IsInterface) { interfaceTypes.Add(typeof(T));}
 
-            //if(typeof(T) !=  metaDataInterfaceType)
-            //if (typeof(T).GetInterfaces().Any(x => x == metaDataInterfaceType) == false) return;
+            var properties = interfaceTypes.SelectMany( x => x.GetProperties())
+                                           .Where(x => x.GetMethod != null)
+                                           .Where(x => x.GetCustomAttribute<AggregationLevelAttribute>() != null);
 
-            //var interfacesTypes = new List<Type> { metaDataInterfaceType };
-            //interfacesTypes.AddRange(metaDataInterfaceType.GetInterfaces());
-            //var namesOfGetters = interfacesTypes.SelectMany(x => x.GetProperties()).Where(x => x.GetMethod != null).Select(x => x.GetMethod!.Name).ToHashSet();
-
-            //var tt = typeof(T);
-            //var properties1 = typeof(T).GetProperties().ToList();
-            //var properties2 = properties1.Where(x => x.GetMethod != null && namesOfGetters.Contains(x.GetMethod.Name)).ToList();
-            //var properties = properties2.Where(x => x.GetCustomAttribute<AggregationLevelAttribute>() != null).ToList();
-
-
-            //var properties = typeof((IMetaData)T).GetProperties().ToList();    
-            var properties = typeof(T).GetProperties()
-                .Where(x => x.GetMethod != null)
-                .Where(x => x.GetCustomAttribute<AggregationLevelAttribute>() != null);
             foreach (PropertyInfo property in properties)
             {
                 var aggregationLevelAttribute = property.GetCustomAttribute<AggregationLevelAttribute>(false);
                 var getPropertyInfo = buildGetPropertyInfoSelector(property);
-                aggregationLevelAttributeSelector[aggregationLevelAttribute!.AggregationLevel] = getPropertyInfo;
+                aggregationLevelAttributeSelector.Add(aggregationLevelAttribute!.AggregationLevel, getPropertyInfo);
             }
         }
 

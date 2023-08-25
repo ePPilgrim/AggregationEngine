@@ -31,7 +31,7 @@ public class OrderedKeyBuilder : IOrderedKeyBuilder<OrderedKey>
                 dict.Add(AggregationLevel.Top, "All");
                 continue;
             }
-            dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(metaData, aggregationLevel).Value);
+            dict.Add(aggregationLevel, keyPropertySelector.GetPropertyWithAggregationLevel<IMetaData>(metaData, aggregationLevel).Value.Value);
         }
         return new OrderedKey(this, keyToStringHelper, aggregationStructure, dict);
     }
